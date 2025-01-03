@@ -14,7 +14,6 @@ namespace Utilities
         private readonly RequestDelegate _next;
         private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-
         public ErrorHandlingMiddleware(RequestDelegate next)
         {
             _next = next;

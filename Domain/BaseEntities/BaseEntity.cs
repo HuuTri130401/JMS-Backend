@@ -18,13 +18,13 @@ namespace Domain.BaseEntities
         public Guid Id { get; set; }
 
         [Description("Thời gian tạo")]
-        public DateTime? Created { get; set; }
+        public DateTimeOffset? Created { get; set; }
 
         [Description("Người tạo")]
         public Guid? CreatedBy { get; set; }
 
         [Description("Thời gian cập nhật")]
-        public DateTime? Updated { get; set; }
+        public DateTimeOffset? Updated { get; set; }
 
         [Description("Người cập nhật")]
         public Guid? UpdatedBy { get; set; }
