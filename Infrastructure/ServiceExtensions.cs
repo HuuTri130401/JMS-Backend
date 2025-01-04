@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Infrastructure.Repository;
 using Infrastructure.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,9 @@ namespace Infrastructure
             #region Entity_Repo
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddTransient<IEmailService, EmailService>();
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             #endregion Entity_Repo
 
             // Cấu hình JWT

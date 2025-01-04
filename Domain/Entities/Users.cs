@@ -49,14 +49,14 @@ namespace Domain.Entities
         public int? Status { get; set; }
 
         [Description("Ngày sinh")]
-        public DateTime? Birthday { get; set; }
+        public DateTimeOffset? Birthday { get; set; }
 
         [Description("Chứng minh nhân dân")]
         [StringLength(50)]
         public string IdentityCard { get; set; }
 
         [Description("Ngày cấp chứng minh nhân dân")]
-        public DateTime? IdentityCardDate { get; set; }
+        public DateTimeOffset? IdentityCardDate { get; set; }
 
         [Description("Nơi cấp chứng minh nhân dân")]
         [StringLength(1000, ErrorMessage = "Tên phải nhỏ hơn 300 kí tự")]

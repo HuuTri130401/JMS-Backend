@@ -65,7 +65,7 @@ try
     });
 
     var app = builder.Build();
-
+    Utilities.HttpContext.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
     app.UseMiddleware<ErrorHandlingMiddleware>();
 
     // Configure the HTTP request pipeline.

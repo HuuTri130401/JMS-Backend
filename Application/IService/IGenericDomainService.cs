@@ -13,6 +13,8 @@ namespace Application.IService
     public interface IGenericDomainService<E, T> where E : BaseEntity where T : BaseSearch
     {
         Task<PagedList<E>> GetPagedListData(T baseSearch);
+        Task<IList<E>> GetListAsync(Expression<Func<E, bool>> expression);
+        Task<IList<E>> GetListAsync(Expression<Func<E, bool>> expression, Expression<Func<E, E>> select);
         IQueryable<E> Query { get; }
         Task<E> GetByIdAsync(Guid id);
         Task<E> GetByIdAsync(Guid id, IConfigurationProvider mapperConfiguration);

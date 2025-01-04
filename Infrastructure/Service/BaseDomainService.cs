@@ -36,6 +36,24 @@ namespace Infrastructure.Service
                 return _unitOfWork.Repository<E>().GetQueryable().AsNoTracking();
             }
         }
+
+        public async Task<IList<E>> GetListAsync(Expression<Func<E, bool>> expression)
+        {
+            return await _unitOfWork.Repository<E>()
+                .GetQueryable()
+                .Where(expression)
+                .ToListAsync();
+        }
+
+        public async Task<IList<E>> GetListAsync(Expression<Func<E, bool>> expression, Expression<Func<E, E>> select)
+        {
+            return await _unitOfWork.Repository<E>()
+                 .GetQueryable()
+                 .Where(expression)
+                 .Select(select)
+                 .ToListAsync();
+        }
+
         public IQueryable<E> Query => Queryable;
 
         public async Task<bool> CreateAsync(E item)
