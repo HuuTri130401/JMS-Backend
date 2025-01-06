@@ -39,12 +39,35 @@ namespace API.Controllers
             {
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK,
-                Data = pagedList
+                Data = pagedList,
+                ResultMessage = "Lấy danh sách người dùng thành công."
             };
         }
 
+        [HttpGet("{id}")]
+        [Description("Xem thông tin chi tiết người dùng")]
+        public async Task<AppDomainResult> GetUserById(Guid id)
+        {
+            Users user = await _userService.GetByIdAsync(id);
+            if (user != null)
+            {
+                var userModel = _mapper.Map<UserModel>(user);
+                return new AppDomainResult
+                {
+                    Success = true,
+                    ResultCode = (int)HttpStatusCode.OK,
+                    Data = userModel,
+                    ResultMessage = "Xem thông tin chi tiết người dùng."
+                };
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Người dùng có id '{id}' Không tồn tại!");
+            }
+        }
+
         [HttpPost]
-        [Description("Thêm mới nhân viên")]
+        [Description("Thêm mới người dùng")]
         public async Task<AppDomainResult> AddUser([FromBody] UserCreate userCreate)
         {
             if (ModelState.IsValid)
@@ -68,17 +91,19 @@ namespace API.Controllers
 
                     if (existingUser.Any(x => x.UserName == user.UserName) && !string.IsNullOrEmpty(user.UserName))
                     {
-                        throw new Exception($"Tên người dùng '{user.UserName}' đã tồn tại trong hệ thống");
+                        throw new Exception($"Tên người dùng '{user.UserName}' đã tồn tại trong hệ thống!");
                     }
 
-                    string code = CodeGenerator.GenerateCode("NV", 6);
+                    string code = CodeGenerator.GenerateCode("ND", 6);
                     user.Code = code;
                     user.Status = (int)Enum.UserStatus.Active;
+                    user.Password = SecurityUtilities.HashSHA1(user.Password);
+                    //user.CreatedBy = LoginContext.Instance?.CurrentUser.UserId;
 
                     bool success = await _userService.CreateAsync(user);
                     if (!success)
                     {
-                        throw new AppException("Lỗi trong quá trình xử lý!");
+                        throw new AppException("Lỗi trong quá trình thêm mới người dùng!");
                     }
                     string link = "Https://";
                     string content = $"<p>Thông tin tài khoản đăng nhập hệ thống HTJ</p>";
@@ -92,16 +117,97 @@ namespace API.Controllers
                     return new AppDomainResult()
                     {
                         ResultCode = (int)HttpStatusCode.Created,
-                        ResultMessage = $"Thêm mới nhân viên: {user.Email} thành công!",
+                        ResultMessage = $"Thêm mới người dùng: {user.Email} thành công.",
                         Success = success,
                     };
                 }
                 else
                 {
-                    throw new AppException("Nhân viên không tồn tại!");
+                    throw new AppException("Người dùng không tồn tại!");
                 }
             }
-            throw new AppException(ModelState.GetErrorMessage());
+            else
+            {
+                throw new AppException(ModelState.GetErrorMessage());
+            }
+        }
+
+        [HttpPut]
+        [Description("Cập nhật người dùng")]
+        public async Task<AppDomainResult> UpdateUser([FromBody] UserUpdate userUpdate)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userService.GetByIdAsync(userUpdate.Id);
+                if (user == null)
+                {
+                    throw new KeyNotFoundException($"Người dùng '{userUpdate.Id}' không tồn tại!");
+                }
+                var item = _mapper.Map<Users>(userUpdate);
+                if (item != null)
+                {
+                    IList<Users> existingUser = await _userService.GetListAsync(x => x.Deleted == false
+                        && (x.Email == user.Email || x.Phone == user.Phone || x.UserName == user.UserName),
+                        x => new Users { Id = x.Id, Phone = x.Phone, UserName = x.UserName });
+
+                    if (existingUser.Any(x => x.Phone == userUpdate.Phone) && !string.IsNullOrEmpty(userUpdate.Phone))
+                    {
+                        throw new Exception($"Số điện thoại '{userUpdate.Phone}' đã tồn tại trong hệ thống!");
+                    }
+
+                    if (existingUser.Any(x => x.UserName == userUpdate.UserName) && !string.IsNullOrEmpty(userUpdate.UserName))
+                    {
+                        throw new Exception($"Tên người dùng '{userUpdate.UserName}' đã tồn tại trong hệ thống!");
+                    }
+
+                    //if (LoginContext.Instance?.CurrentUser == null)
+                    //{
+                    //    throw new AppException("User is not authenticated.");
+                    //}
+
+                    //item.UpdatedBy = LoginContext.Instance?.CurrentUser.UserId;
+
+                    bool success = await _userService.UpdateAsync(item);
+                    if (!success)
+                    {
+                        throw new AppException("Lỗi trong quá trình cập nhật người dùng!");
+                    }
+                    return new AppDomainResult
+                    {
+                        Success = success,
+                        ResultCode = (int)HttpStatusCode.OK,
+                        ResultMessage = $"Cập nhật người dùng '{userUpdate.Id}' thành công.",
+                    };
+                }
+                else
+                {
+                    throw new KeyNotFoundException($"Người dùng có id '{userUpdate.Id}' không tồn tại!");
+                }
+            }
+            else
+            {
+                throw new AppException(ModelState.GetErrorMessage());
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Description("Xóa người dùng")]
+        public async Task<AppDomainResult> DeleteById(Guid id)
+        {
+            Users user = await _userService.DeleteDataAsync(id);
+            if (user != null)
+            {
+                return new AppDomainResult
+                {
+                    Success = true,
+                    ResultCode = (int)HttpStatusCode.OK,
+                    ResultMessage = $"Xóa người dùng id '{id}' thành công."
+                };
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Người dùng id '{id}' không tồn tại!");
+            }
         }
     }
 }

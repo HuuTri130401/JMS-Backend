@@ -19,11 +19,13 @@ namespace Application.IService
         Task<E> GetByIdAsync(Guid id);
         Task<E> GetByIdAsync(Guid id, IConfigurationProvider mapperConfiguration);
         Task<E> GetSingleAsync(Expression<Func<E, bool>> expression);
-        Task<bool> UpdateAsync(E item);
-        Task<bool> UpdateAsync(IList<E> items);
         Task<bool> CreateAsync(E item);
         Task<bool> CreateAsync(IList<E> items);
+        Task<bool> UpdateAsync(E item);
+        Task<bool> UpdateAsync(IList<E> items);
         Task<bool> UpdateFieldAsync(IList<E> items, params Expression<Func<E, object>>[] includeProperties);
         Task<bool> UpdateFieldAsync(E item, params Expression<Func<E, object>>[] includeProperties);
+        Task<bool> DeleteAsync(Guid id);
+        Task<E> DeleteDataAsync(Guid id);
     }
 }
