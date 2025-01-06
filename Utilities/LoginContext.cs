@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Utilities
 {
-    public class LoginContext
+    public sealed class LoginContext
     {
         private static LoginContext instance = null;
 
@@ -39,23 +39,8 @@ namespace Utilities
                 return null;
             }
         }
-
-        public void Clear()
-        {
-            instance = null;
-        }
-
-        public UserLoginModel GetCurrentUser(IHttpContextAccessor httpContext)
-        {
-            if (httpContext != null && httpContext.HttpContext.User.Identity.IsAuthenticated)
-            {
-                var claim = httpContext.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData);
-                if (claim != null)
-                    return JsonConvert.DeserializeObject<UserLoginModel>(claim.Value);
-            }
-            return null;
-        }
     }
+
     public class UserLoginModel
     {
         public Guid UserId { get; set; }

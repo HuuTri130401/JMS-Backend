@@ -33,7 +33,9 @@ namespace Infrastructure.Service
         {
             get
             {
-                return _unitOfWork.Repository<E>().GetQueryable().AsNoTracking();
+                return _unitOfWork.Repository<E>()
+                    .GetQueryable()
+                    .AsNoTracking();
             }
         }
 
@@ -98,7 +100,8 @@ namespace Infrastructure.Service
         {
             return await Queryable
                 .Where(e => e.Id == id && e.Deleted == false)
-                .AsNoTracking().FirstOrDefaultAsync();
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
         }
 
         public async Task<E> GetByIdAsync(Guid id, IConfigurationProvider mapperConfiguration)
@@ -144,14 +147,17 @@ namespace Infrastructure.Service
             }
             return pagedList;
         }
+
         protected virtual Expression<Func<E, bool>> GetExpression(T baseSearch)
         {
             return e => !(bool)e.Deleted;
         }
+
         protected virtual string GetStoreProcName()
         {
             return string.Empty;
         }
+
         protected virtual SqlParameter[] GetSqlParameters(T baseSearch)
         {
             List<SqlParameter> sqlParameters = new List<SqlParameter>();
@@ -175,6 +181,7 @@ namespace Infrastructure.Service
             SqlParameter[] parameters = sqlParameters.ToArray();
             return parameters;
         }
+
         public async Task<E> GetSingleAsync(Expression<Func<E, bool>> expression)
         {
             return await _unitOfWork.Repository<E>()
@@ -245,6 +252,39 @@ namespace Infrastructure.Service
         public async Task<bool> UpdateFieldAsync(E item, params Expression<Func<E, object>>[] includeProperties)
         {
             return await UpdateFieldAsync(new List<E> { item }, includeProperties);
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var exists = Queryable
+                .AsNoTracking()
+                .FirstOrDefault(e => e.Id == id);
+            if (exists != null)
+            {
+                //exists.UpdatedBy = LoginContext.Instance?.CurrentUser.UserId;
+                exists.Deleted = true;
+                _unitOfWork.Repository<E>().Update(exists);
+                await _unitOfWork.SaveAsync();
+                return true;
+            }
+            else
+            {
+                throw new Exception(id + " not exists!");
+            }
+        }
+
+        public async Task<E> DeleteDataAsync(Guid id)
+        {
+            E exists = Queryable.AsNoTracking().FirstOrDefault(e => e.Id == id);
+            if (exists != null)
+            {
+                //exists.UpdatedBy = LoginContext.Instance?.CurrentUser.UserId;
+                exists.Deleted = true;
+                _unitOfWork.Repository<E>().Update(exists);
+                await _unitOfWork.SaveAsync();
+                return exists;
+            }
+            throw new Exception(id + " not exists!");
         }
     }
 }
