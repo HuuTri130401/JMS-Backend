@@ -103,7 +103,7 @@ namespace API.Controllers
                     Console.WriteLine($"CurrentUser: {(LoginContext.Instance?.CurrentUser != null ? "Exists" : "Null")}");
                     Console.WriteLine($"UserId: {LoginContext.Instance?.CurrentUser?.UserId.ToString() ?? "Null"}");
 
-                    user.CreatedBy = LoginContext.Instance?.CurrentUser.UserId;
+                    //user.CreatedBy = LoginContext.Instance?.CurrentUser.UserId;
 
                     bool success = await _userService.CreateAsync(user);
                     if (!success)
@@ -165,12 +165,7 @@ namespace API.Controllers
                         throw new Exception($"Tên người dùng '{userUpdate.UserName}' đã tồn tại trong hệ thống!");
                     }
 
-                    //if (LoginContext.Instance?.CurrentUser == null)
-                    //{
-                    //    throw new AppException("User is not authenticated.");
-                    //}
-
-                    item.UpdatedBy = LoginContext.Instance?.CurrentUser.UserId;
+                    //item.UpdatedBy = LoginContext.Instance?.CurrentUser.UserId;
 
                     bool success = await _userService.UpdateAsync(item);
                     if (!success)
