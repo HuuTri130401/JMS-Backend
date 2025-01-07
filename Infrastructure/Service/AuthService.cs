@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using static Utilities.Enum;
 using Utilities;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Authentication;
 
 namespace Infrastructure.Service
 {
@@ -34,11 +35,30 @@ namespace Infrastructure.Service
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
             var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
             };
+
+            // Thêm role vào Claim
+            // Kiểm tra UserRoles không null
+            if (user.UserRoles != null)
+            {
+                var roles = user.UserRoles
+                    .Where(ur => ur.Roles != null) // Đảm bảo Roles không null
+                    .Select(ur => ur.Roles.RoleName)
+                    .Distinct()
+                    .ToList();
+
+                foreach (var role in roles)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, role));
+                }
+            }
+
             var tokenOptions = new JwtSecurityToken(
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
@@ -73,14 +93,16 @@ namespace Infrastructure.Service
         public async Task<UserLoginResponseModel> Login(LoginModel request)
         {
             Users user = await Queryable
+                .Include(u => u.UserRoles) // Nạp UserRoles
+                    .ThenInclude(ur => ur.Roles) // Nạp Roles từ UserRoles
                 .Where(e => e.Deleted == false && (e.UserName == request.UserName))
                 .FirstOrDefaultAsync();
+
             if (user != null)
             {
                 if (user.Status == (int)UserStatus.Locked)
-                    throw new JMSException("Tài khoản bạn đã bị khóa. Vui lòng liên hệ quản trị!");
-                if (user.IsAdmin == false)
-                    throw new JMSException("Không có quyền truy cập!");
+                    throw new AppException("Tài khoản bạn đã bị khóa. Vui lòng liên hệ quản trị!");
+
                 var userModel = _mapper.Map<UserModel>(user);
                 var token = await GenerateJwtToken(user);
                 var refreshToken = await GenerateRefreshToken();

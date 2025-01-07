@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250103093601_Update datime offset")]
-    partial class Updatedatimeoffset
+    [Migration("20250107074448_Init DB")]
+    partial class InitDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -59,18 +59,57 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("37eb2221-0371-4109-92d6-2195de31c1db"),
+                            Id = new Guid("da42c2c3-3d94-47f8-b61a-6996f9569478"),
                             Deleted = false,
                             IsActive = true,
                             RoleName = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("a8e854cf-b32b-4b46-b50c-7c3c15f4ea67"),
+                            Id = new Guid("2a07be7d-cd91-4c7a-987c-3a17b39a6722"),
                             Deleted = false,
                             IsActive = true,
                             RoleName = "User"
                         });
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserRoles", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("Created")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("RolesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("Updated")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UsersId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RolesId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("Domain.Entities.Users", b =>
@@ -181,10 +220,10 @@ namespace Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("e6b0c084-ace8-41a0-8659-99f9ee3cef19"),
+                            Id = new Guid("f072c1a8-30e3-4717-a9a5-354caab19a9e"),
                             Address = "Binh Phuoc",
                             Code = "AD-01",
-                            Created = new DateTimeOffset(new DateTime(2025, 1, 3, 16, 36, 0, 904, DateTimeKind.Unspecified).AddTicks(6833), new TimeSpan(0, 0, 0, 0, 0)),
+                            Created = new DateTimeOffset(new DateTime(2025, 1, 7, 14, 44, 48, 751, DateTimeKind.Unspecified).AddTicks(7748), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Deleted = false,
                             Email = "admin@gmail.com",
@@ -206,34 +245,33 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("RolesUsers", b =>
+            modelBuilder.Entity("Domain.Entities.UserRoles", b =>
                 {
-                    b.Property<Guid>("RolesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("RolesId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("RolesUsers");
-                });
-
-            modelBuilder.Entity("RolesUsers", b =>
-                {
-                    b.HasOne("Domain.Entities.Roles", null)
-                        .WithMany()
+                    b.HasOne("Domain.Entities.Roles", "Roles")
+                        .WithMany("UserRoles")
                         .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Users", null)
-                        .WithMany()
+                    b.HasOne("Domain.Entities.Users", "Users")
+                        .WithMany("UserRoles")
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Roles");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Roles", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Users", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

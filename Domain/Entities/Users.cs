@@ -87,6 +87,6 @@ namespace Domain.Entities
         [NotMapped]
         [Column(TypeName = "decimal(18,2)")]
         public decimal TotalProfit { get; set; }
-        public ICollection<Roles> Roles { get; set; }
+        public ICollection<UserRoles> UserRoles { get; set; }
     }
 }

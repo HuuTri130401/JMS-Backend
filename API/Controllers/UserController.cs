@@ -15,7 +15,7 @@ namespace API.Controllers
     [Description("User Management")]
     [Route("api/user")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class UserController : ControllerBase
     {
         private IUserService _userService;
@@ -98,7 +98,12 @@ namespace API.Controllers
                     user.Code = code;
                     user.Status = (int)Enum.UserStatus.Active;
                     user.Password = SecurityUtilities.HashSHA1(user.Password);
-                    //user.CreatedBy = LoginContext.Instance?.CurrentUser.UserId;
+
+                    Console.WriteLine($"LoginContext.Instance: {(LoginContext.Instance != null ? "Exists" : "Null")}");
+                    Console.WriteLine($"CurrentUser: {(LoginContext.Instance?.CurrentUser != null ? "Exists" : "Null")}");
+                    Console.WriteLine($"UserId: {LoginContext.Instance?.CurrentUser?.UserId.ToString() ?? "Null"}");
+
+                    user.CreatedBy = LoginContext.Instance?.CurrentUser.UserId;
 
                     bool success = await _userService.CreateAsync(user);
                     if (!success)
@@ -165,7 +170,7 @@ namespace API.Controllers
                     //    throw new AppException("User is not authenticated.");
                     //}
 
-                    //item.UpdatedBy = LoginContext.Instance?.CurrentUser.UserId;
+                    item.UpdatedBy = LoginContext.Instance?.CurrentUser.UserId;
 
                     bool success = await _userService.UpdateAsync(item);
                     if (!success)
