@@ -19,6 +19,8 @@ try
     builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
     builder.Host.UseNLog(); // NLog.Web
 
+    //builder.Services.AddHttpContextAccessor();
+
     //============ Config Persistence and Application Project ============//
     builder.Services.ConfigurePersistence(builder.Configuration);
     builder.Services.ConfigureApplication();

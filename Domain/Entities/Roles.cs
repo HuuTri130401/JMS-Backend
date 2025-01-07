@@ -10,6 +10,6 @@ namespace Domain.Entities
     public class Roles : BaseEntity
     {
         public string RoleName { get; set; }
-        public ICollection<Users> Users { get; set; }
+        public ICollection<UserRoles> UserRoles { get; set; }
     }
 }
