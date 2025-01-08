@@ -12,5 +12,9 @@ namespace Application.IService
     public interface IUserService : IGenericDomainService<Users, UserSearch>
     {
         Task<PagedList<UserModel>> GetPagedListUsers(UserSearch baseSearch);
+        Task<UserModel> GetUserByIdAsync(Guid id);
+        Task CreateUserAsync(UserCreate userCreate);
+        Task UpdateUserAsync(UserUpdate userUpdate);
+        Task DeleteUserAsync(Guid id);
     }
 }

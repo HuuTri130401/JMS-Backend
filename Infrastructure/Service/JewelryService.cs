@@ -56,7 +56,7 @@ namespace Infrastructure.Service
             return jewelryModel;
         }
 
-        public async Task CreateJewelry(JewelryCreate jewelryCreate)
+        public async Task CreateJewelrAsync(JewelryCreate jewelryCreate)
         {
             if (jewelryCreate == null)
             {
@@ -76,7 +76,7 @@ namespace Infrastructure.Service
             }
         }
 
-        public async Task UpdateJewelry(JewelryUpdate jewelryUpdate)
+        public async Task UpdateJewelrAsync(JewelryUpdate jewelryUpdate)
         {
             if (jewelryUpdate == null)
             {
@@ -98,7 +98,7 @@ namespace Infrastructure.Service
             }
         }
 
-        public async Task DeleteJewelry(Guid id)
+        public async Task DeleteJewelryAsync(Guid id)
         {
             var jewelry = await GetByIdAsync(id);
             if(jewelry == null)

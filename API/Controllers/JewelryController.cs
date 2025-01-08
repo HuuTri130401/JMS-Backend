@@ -54,7 +54,7 @@ namespace API.Controllers
         [Description("Thêm mới trang sức")]
         public async Task<AppDomainResult> AddJewelry([FromBody] JewelryCreate jewelryCreate)
         {
-            await _jewelryService.CreateJewelry(jewelryCreate);
+            await _jewelryService.CreateJewelrAsync(jewelryCreate);
             return new AppDomainResult
             {
                 Success = true,
@@ -67,7 +67,7 @@ namespace API.Controllers
         [Description("Cập nhật trang sức")]
         public async Task<AppDomainResult> UpdateJewelry([FromBody] JewelryUpdate jewelryUpdate)
         {
-            await _jewelryService.UpdateJewelry(jewelryUpdate);
+            await _jewelryService.UpdateJewelrAsync(jewelryUpdate);
             return new AppDomainResult
             {
                 Success = true,
@@ -80,7 +80,7 @@ namespace API.Controllers
         [Description("Xóa trang sức")]
         public async Task<AppDomainResult> DeleteJewelry(Guid id)
         {
-            await _jewelryService.DeleteJewelry(id);
+            await _jewelryService.DeleteJewelryAsync(id);
             return new AppDomainResult
             {
                 Success = true,
