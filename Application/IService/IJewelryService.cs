@@ -13,8 +13,8 @@ namespace Application.IService
     {
         Task<PagedList<JewelryModel>> GetPagedListJewelry(JewelrySearch jewelrySearch);
         Task<JewelryModel> GetJewelryByIdAsync(Guid id);
-        Task CreateJewelry(JewelryCreate jewelryCreate);
-        Task UpdateJewelry(JewelryUpdate jewelryUpdate);
-        Task DeleteJewelry(Guid id);
+        Task CreateJewelrAsync(JewelryCreate jewelryCreate);
+        Task UpdateJewelrAsync(JewelryUpdate jewelryUpdate);
+        Task DeleteJewelryAsync(Guid id);
     }
 }
