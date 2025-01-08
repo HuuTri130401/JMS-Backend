@@ -40,7 +40,7 @@ namespace API.Controllers
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK,
                 Data = pagedList,
-                ResultMessage = "Lấy danh sách người dùng thành công."
+                ResultMessage = "Successfully retrieved the list of users."
             };
         }
 
@@ -57,7 +57,7 @@ namespace API.Controllers
                     Success = true,
                     ResultCode = (int)HttpStatusCode.OK,
                     Data = userModel,
-                    ResultMessage = "Xem thông tin chi tiết người dùng."
+                    ResultMessage = "Successfully retrieved detail of user."
                 };
             }
             else
@@ -94,7 +94,7 @@ namespace API.Controllers
                         throw new Exception($"Tên người dùng '{user.UserName}' đã tồn tại trong hệ thống!");
                     }
 
-                    string code = CodeGenerator.GenerateCode("ND", 6);
+                    string code = CodeGenerator.GenerateCode("USER", 4);
                     user.Code = code;
                     user.Status = (int)Enum.UserStatus.Active;
                     user.Password = SecurityUtilities.HashSHA1(user.Password);
@@ -108,7 +108,7 @@ namespace API.Controllers
                     bool success = await _userService.CreateAsync(user);
                     if (!success)
                     {
-                        throw new AppException("Lỗi trong quá trình thêm mới người dùng!");
+                        throw new AppException("An error occurred while adding new User!");
                     }
                     string link = "Https://";
                     string content = $"<p>Thông tin tài khoản đăng nhập hệ thống HTJ</p>";
@@ -122,7 +122,7 @@ namespace API.Controllers
                     return new AppDomainResult()
                     {
                         ResultCode = (int)HttpStatusCode.Created,
-                        ResultMessage = $"Thêm mới người dùng: {user.Email} thành công.",
+                        ResultMessage = $"Successfully added new user: {user.Email}.",
                         Success = success,
                     };
                 }
