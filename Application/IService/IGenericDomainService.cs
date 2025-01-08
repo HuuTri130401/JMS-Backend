@@ -27,5 +27,6 @@ namespace Application.IService
         Task<bool> UpdateFieldAsync(E item, params Expression<Func<E, object>>[] includeProperties);
         Task<bool> DeleteAsync(Guid id);
         Task<E> DeleteDataAsync(Guid id);
+        Task<int> GetTotalQuantity();
     }
 }

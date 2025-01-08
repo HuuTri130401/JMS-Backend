@@ -21,5 +21,11 @@ namespace Utilities
             string randomNumber = random.Next((int) Math.Pow(10, length - 1), (int)Math.Pow(10, length)).ToString();
             return $"{prefix}-{randomNumber}";
         }
+
+        public static string GenerateCodeJewelry(string prefix, int count)
+        {
+            count += 1;
+            return $"{prefix}-{count}";
+        }
     }
 }

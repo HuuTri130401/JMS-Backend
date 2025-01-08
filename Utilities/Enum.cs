@@ -36,5 +36,16 @@ namespace Utilities
             /// </summary>
             Other = 3
         }
+
+        public enum JewelryStatus
+        {
+            PendingApproval,   // Yêu Cầu Duyệt
+            AwaitingStockIn,   // Chờ Nhập Kho
+            AvailableForSale,  // Có Thể Bán
+            Sold,              // Đã Bán
+            Cancelled,         // Hủy
+            AwaitingStockOut,  // Chờ Xuất Kho
+            Discarded          // Xuất Bỏ
+        }
     }
 }

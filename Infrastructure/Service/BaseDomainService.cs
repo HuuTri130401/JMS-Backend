@@ -286,5 +286,16 @@ namespace Infrastructure.Service
             }
             throw new Exception(id + " not exists!");
         }
+
+        public async Task<int> GetTotalQuantity()
+        {
+            //GetQueryable(): Trả về một IQueryable<E> để bạn có thể
+            //      thực hiện các truy vấn LINQ trên thực thể E.
+            var totalQuantity = await _unitOfWork
+                .Repository<E>()
+                .GetQueryable()
+                .CountAsync(); // Đếm tổng số lượng
+            return totalQuantity;
+        }
     }
 }

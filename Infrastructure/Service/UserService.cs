@@ -15,7 +15,13 @@ namespace Infrastructure.Service
 {
     public class UserService : BaseDomainService<Users, UserSearch>, IUserService
     {
-        private IConfiguration _configuaration;
+        /// <summary>
+        /// private: dùng nội bộ class UserService
+        /// readonly: chỉ khởi tạo duy nhất 1 lần , không thể thay đổi sau khi khởi tạo
+        ///     ở đây là khởi tạo trong constructor
+        /// protected readonly tương tự, tuy nhiên có thể dùng cho class con kế thừa
+        /// </summary>
+        private readonly IConfiguration _configuaration;
 
         /*
          base(unitOfWork, mapper) gọi đến constructor của lớp cha (BaseDomainService), và mục đích của base là để truyền các dependency 
