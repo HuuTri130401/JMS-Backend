@@ -76,6 +76,9 @@ namespace API.Controllers
             };
         }
 
+        [HttpPut]
+
+
         [HttpDelete]
         [Description("Xóa trang sức")]
         public async Task<AppDomainResult> DeleteJewelry(Guid id)

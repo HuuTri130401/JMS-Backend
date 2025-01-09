@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace Application.Models.JewelryModels
 {
@@ -15,6 +16,13 @@ namespace Application.Models.JewelryModels
         public decimal? ImportPrice { get; set; }
         public decimal? SalePrice { get; set; }
         public int Status { get; set; }
+        public string? SatusName
+        {
+            get
+            {
+                return EnumName.GetJewelryStatusName().SingleOrDefault(x => x.Key == Status)?.Title;
+            }
+        }
         public DateTimeOffset? ImportedAt { get; set; }
         public DateTimeOffset? SoldAt { get; set; }
         public string Note { get; set; }

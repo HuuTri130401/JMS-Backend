@@ -110,7 +110,7 @@ namespace Infrastructure.Service
             content = content + $"<p><b>Password: {userCreate.Password}</b></p>";
             content = content + $"<p>If you did not request this account, please contact our support team immediately.</p>";
             content = content + $"<p>Best regards,<br><strong>HTJ Support</strong></p>";
-            content = content + $"<p>Accress here <a href=\"{link}\">tại đây</a>.</p>";
+            content = content + $"<p>Accress <a href=\"{link}\">HERE</a>.</p>";
 
             await _emailService.SendEmailAsync(user.Email, "HTJ - ACCOUNT INFORMATION FOR SOFTWARE ACCESS", content);
         }
