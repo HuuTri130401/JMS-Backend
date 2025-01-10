@@ -40,13 +40,13 @@ namespace Utilities
 
         public enum JewelryStatus
         {
-            PendingApproval,   // Yêu Cầu Duyệt
-            AwaitingStockIn,   // Chờ Nhập Kho
-            AvailableForSale,  // Có Thể Bán
-            Sold,              // Đã Bán
-            Cancelled,         // Hủy
-            AwaitingStockOut,  // Chờ Xuất Kho
-            Discarded          // Xuất Bỏ
+            PendingApproval = 1,   // Yêu Cầu Duyệt
+            AwaitingStockIn = 2,   // Chờ Nhập Kho
+            AvailableForSale = 3,  // Có Thể Bán
+            Sold = 4,              // Đã Bán
+            Cancelled = 5,         // Hủy
+            AwaitingStockOut = 6,  // Chờ Xuất Kho
+            Discarded = 7          // Xuất Bỏ
         }
     }
 

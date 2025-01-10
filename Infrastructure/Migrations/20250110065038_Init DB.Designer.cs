@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250110065038_Init DB")]
+    partial class InitDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,12 +38,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
-
-                    b.Property<decimal>("ExportPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTimeOffset>("ExportedAt")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<decimal>("ImportPrice")
                         .HasColumnType("decimal(18,2)");
@@ -440,7 +436,7 @@ namespace Infrastructure.Migrations
                             Id = new Guid("aac63b91-beb8-4de4-b050-f2888fdff282"),
                             Address = "Binh Phuoc",
                             Code = "AD-01",
-                            Created = new DateTimeOffset(new DateTime(2025, 1, 10, 13, 58, 16, 593, DateTimeKind.Unspecified).AddTicks(5169), new TimeSpan(0, 0, 0, 0, 0)),
+                            Created = new DateTimeOffset(new DateTime(2025, 1, 10, 13, 50, 38, 381, DateTimeKind.Unspecified).AddTicks(6834), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Deleted = false,
                             Email = "admin@gmail.com",

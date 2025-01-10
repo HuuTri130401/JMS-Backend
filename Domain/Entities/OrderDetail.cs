@@ -27,7 +27,7 @@ namespace Domain.Entities
         public Jewelry Jewelry { get; set; }
 
         [Required]
-        [Description("Giá bán")]
+        [Description("Giá bán (tại thời điểm mua)")] 
         public decimal SalePrice { get; set; }
 
         [Description("Ngày bán")]

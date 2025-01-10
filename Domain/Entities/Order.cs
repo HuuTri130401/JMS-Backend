@@ -11,9 +11,6 @@ namespace Domain.Entities
 {
     public class Order : BaseEntity
     {
-        [Description("Tên khách hàng")]
-        public string CustomerName { get; set; }
-
         [Description("Mã khách hàng")]
         public Guid CustomerId { get; set; }
 
@@ -24,14 +21,12 @@ namespace Domain.Entities
         [Description("Trạng thái đơn hàng")]
         public int Status { get; set; }
 
-        [Description("Thông tin liên hệ")]
-        public string CustomerContact { get; set; } 
-
         [Description("Tổng giá trị đơn hàng")]
         public decimal TotalAmount { get; set; }
         [Description("Ghi chú")]
         public string Note { get; set; }
 
+        // 1 Order có thể có nhiều OrderDetails
         public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     }
 }
