@@ -36,11 +36,13 @@ namespace Domain.Entities
 
         /// <summary>
         /// Trạng thái
-        /// 0 - Chờ duyệt
-        /// 1 - Chờ nhập kho
-        /// 2 - Có thể bán
-        /// 3 - Đã bán
-        /// 4 - Hủy
+        /// 1 - Yêu Cầu Duyệt
+        /// 2 - Chờ Nhập Kho
+        /// 3 - Có Thể Bán
+        /// 4 - Đã Bán
+        /// 5 - Hủy
+        /// 6 - Chờ Xuất Kho
+        /// 7 - Xuất Bỏ
         /// </summary>
         [Required]
         [Description("Trạng thái sản phẩm")] 
@@ -64,7 +66,6 @@ namespace Domain.Entities
         [Description("QRCode")]
         public string? QRCode { get; set; }
 
-        [Required]
         [StringLength(50)]
         [Description("Mã SKU (Stock Keeping Unit)")]
         public string SKU { get; set; } = string.Empty;
@@ -100,6 +101,11 @@ namespace Domain.Entities
         public string? Supplier { get; set; }
 
         // Liên kết với OrderDetail nếu đã được bán
-        public OrderDetail? OrderDetail { get; set; }
+        // Mỗi Product có thể xuất hiện trong nhiều OrderDetails (dù thực tế bán 1 lần, 
+        // nhưng về logic DB, 1-n vẫn hợp lệ).
+        public ICollection<OrderDetail> OrderDetails { get; set; }
+
+        // Mỗi Product có thể có nhiều lần di chuyển kho (IN, OUT, TRANSFER)
+        public List<Inventory> InventoryMovements { get; set; } = new List<Inventory>();
     }
 }

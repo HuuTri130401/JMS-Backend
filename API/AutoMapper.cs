@@ -11,10 +11,10 @@ namespace API
         public AutoMapper()
         {
             //Người dùng
-            CreateMap<UserModel, Users>().ReverseMap();
-            CreateMap<UserCreate, Users>().ReverseMap();
-            CreateMap<UserUpdate, Users>().ReverseMap();
-            CreateMap<PagedList<UserModel>, PagedList<Users>>().ReverseMap();
+            CreateMap<UserModel, User>().ReverseMap();
+            CreateMap<UserCreate, User>().ReverseMap();
+            CreateMap<UserUpdate, User>().ReverseMap();
+            CreateMap<PagedList<UserModel>, PagedList<User>>().ReverseMap();
 
             //Jewelry
             CreateMap<JewelryModel, Jewelry>().ReverseMap();
