@@ -69,5 +69,13 @@ namespace Infrastructure.Context
         public DbSet<Users> Users { get; set; }
         public DbSet<Roles> Roles { get; set; }
         public DbSet<Jewelry> Jewelries { get; set; }
+<<<<<<< Updated upstream
+=======
+        public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<InventoryDetails> InventoryDetails { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+
+>>>>>>> Stashed changes
     }
 }

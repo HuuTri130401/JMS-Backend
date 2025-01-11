@@ -4,6 +4,7 @@ using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250111081000_update inventory v4")]
+    partial class updateinventoryv4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,8 +24,6 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-<<<<<<< Updated upstream
-=======
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.Property<Guid>("Id")
@@ -131,7 +131,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("InventoryDetails");
                 });
 
->>>>>>> Stashed changes
             modelBuilder.Entity("Domain.Entities.Jewelry", b =>
                 {
                     b.Property<Guid>("Id")
@@ -256,16 +255,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid?>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CustomerContact")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool?>("Deleted")
                         .HasColumnType("bit");
@@ -291,7 +282,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderDetail", b =>
@@ -332,15 +323,14 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("JewelryId")
-                        .IsUnique();
+                    b.HasIndex("JewelryId");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderDetail");
+                    b.ToTable("OrderDetails");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Roles", b =>
+            modelBuilder.Entity("Domain.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -371,48 +361,25 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("254a86dd-3e41-45b8-bb91-f97ee3b17c70"),
+                            Deleted = false,
+                            IsActive = true,
+                            RoleName = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("a0d68896-6e89-46a4-a9e7-2b0aa17edc97"),
+                            Deleted = false,
+                            IsActive = true,
+                            RoleName = "User"
+                        });
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserRoles", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("Created")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool?>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("RolesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTimeOffset?>("Updated")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RolesId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("UserRoles");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Users", b =>
+            modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -516,8 +483,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-<<<<<<< Updated upstream
-=======
 
                     b.HasData(
                         new
@@ -613,14 +578,13 @@ namespace Infrastructure.Migrations
                     b.Navigation("Inventory");
 
                     b.Navigation("Jewelry");
->>>>>>> Stashed changes
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderDetail", b =>
                 {
                     b.HasOne("Domain.Entities.Jewelry", "Jewelry")
-                        .WithOne("OrderDetail")
-                        .HasForeignKey("Domain.Entities.OrderDetail", "JewelryId")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("JewelryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -637,15 +601,15 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.UserRoles", b =>
                 {
-                    b.HasOne("Domain.Entities.Roles", "Roles")
+                    b.HasOne("Domain.Entities.Role", "Roles")
                         .WithMany("UserRoles")
-                        .HasForeignKey("RolesId")
+                        .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Users", "Users")
+                    b.HasOne("Domain.Entities.User", "Users")
                         .WithMany("UserRoles")
-                        .HasForeignKey("UsersId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -661,13 +625,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Jewelry", b =>
                 {
-<<<<<<< Updated upstream
-                    b.Navigation("OrderDetail");
-=======
                     b.Navigation("InventoryDetails");
 
                     b.Navigation("OrderDetails");
->>>>>>> Stashed changes
                 });
 
             modelBuilder.Entity("Domain.Entities.Order", b =>
@@ -675,12 +635,12 @@ namespace Infrastructure.Migrations
                     b.Navigation("OrderDetails");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Roles", b =>
+            modelBuilder.Entity("Domain.Entities.Role", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Users", b =>
+            modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Navigation("UserRoles");
                 });
