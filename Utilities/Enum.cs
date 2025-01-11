@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Utilities.Enum;
 
 namespace Utilities
 {
@@ -39,15 +40,6 @@ namespace Utilities
 
         public enum JewelryStatus
         {
-<<<<<<< Updated upstream
-            PendingApproval,   // Yêu Cầu Duyệt
-            AwaitingStockIn,   // Chờ Nhập Kho
-            AvailableForSale,  // Có Thể Bán
-            Sold,              // Đã Bán
-            Cancelled,         // Hủy
-            AwaitingStockOut,  // Chờ Xuất Kho
-            Discarded          // Xuất Bỏ
-=======
             /// <summary>
             /// Yêu Cầu Duyệt
             /// </summary>
@@ -116,7 +108,29 @@ namespace Utilities
             /// Xuất kho
             /// </summary>
             Export = 2,
->>>>>>> Stashed changes
         }
+    }
+
+    public partial class EnumName
+    {
+        public static List<EnumObject> GetJewelryStatusName()
+        {
+            return new List<EnumObject>()
+            {
+                new EnumObject { Key = (int)JewelryStatus.PendingApproval, Title = "Pending Approval"},
+                new EnumObject { Key = (int)JewelryStatus.AwaitingStockIn, Title = "Awaiting Stock In"},
+                new EnumObject { Key = (int)JewelryStatus.AvailableForSale, Title = "Available For Sale"},
+                new EnumObject { Key = (int)JewelryStatus.Sold, Title = "Sold"},
+                new EnumObject { Key = (int)JewelryStatus.Cancelled, Title = "Cancelled"},
+                new EnumObject { Key = (int)JewelryStatus.AwaitingStockOut, Title = "Awaiting Stock Out"},
+                new EnumObject { Key = (int)JewelryStatus.Discarded, Title = "Discarded"},
+            };
+        }
+    }
+
+    public class EnumObject
+    {
+        public int Key { get; set; }
+        public string Title { get; set; }
     }
 }

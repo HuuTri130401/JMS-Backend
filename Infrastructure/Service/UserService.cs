@@ -14,7 +14,7 @@ using System.Net;
 
 namespace Infrastructure.Service
 {
-    public class UserService : BaseDomainService<Users, UserSearch>, IUserService
+    public class UserService : BaseDomainService<User, UserSearch>, IUserService
     {
         /// <summary>
         /// private: dùng nội bộ class UserService
@@ -37,7 +37,7 @@ namespace Infrastructure.Service
 
         public async Task<PagedList<UserModel>> GetPagedListUsers(UserSearch baseSearch)
         {
-            PagedList<Users> listUsers = await GetPagedListData(baseSearch);
+            PagedList<User> listUsers = await GetPagedListData(baseSearch);
             PagedList<UserModel> listUsersModel = _mapper.Map<PagedList<UserModel>>(listUsers);
             return listUsersModel;
         }
@@ -49,7 +49,7 @@ namespace Infrastructure.Service
 
         public async Task<UserModel> GetUserByIdAsync(Guid id)
         {
-            Users user = await GetByIdAsync(id);
+            User user = await GetByIdAsync(id);
             if (user == null)
             {
                 throw new KeyNotFoundException($"User with ID '{id}' does not exist.");
@@ -65,10 +65,10 @@ namespace Infrastructure.Service
                 throw new AppException("UserCreate cannot be null!");
             }
 
-            var user = _mapper.Map<Users>(userCreate);
-            IList<Users> existingUser = await GetListAsync(x => x.Deleted == false
+            var user = _mapper.Map<User>(userCreate);
+            IList<User> existingUser = await GetListAsync(x => x.Deleted == false
             && (x.Email == user.Email || x.Phone == user.Phone || x.UserName == user.UserName),
-            x => new Users { Id = x.Id, Email = x.Email, Phone = x.Phone, UserName = x.UserName });
+            x => new User { Id = x.Id, Email = x.Email, Phone = x.Phone, UserName = x.UserName });
 
             if (existingUser.Any(x => x.Email == user.Email) && !string.IsNullOrEmpty(user.Email))
             {
@@ -110,7 +110,7 @@ namespace Infrastructure.Service
             content = content + $"<p><b>Password: {userCreate.Password}</b></p>";
             content = content + $"<p>If you did not request this account, please contact our support team immediately.</p>";
             content = content + $"<p>Best regards,<br><strong>HTJ Support</strong></p>";
-            content = content + $"<p>Accress here <a href=\"{link}\">tại đây</a>.</p>";
+            content = content + $"<p>Accress <a href=\"{link}\">HERE</a>.</p>";
 
             await _emailService.SendEmailAsync(user.Email, "HTJ - ACCOUNT INFORMATION FOR SOFTWARE ACCESS", content);
         }
@@ -128,10 +128,10 @@ namespace Infrastructure.Service
                 throw new KeyNotFoundException($"User with ID '{userUpdate.Id}' does not exist.");
             }
 
-            var item = _mapper.Map<Users>(userUpdate);
-            IList<Users> existingUser = await GetListAsync(x => x.Deleted == false
+            var item = _mapper.Map<User>(userUpdate);
+            IList<User> existingUser = await GetListAsync(x => x.Deleted == false
                 && (x.Email == user.Email || x.Phone == user.Phone || x.UserName == user.UserName),
-                x => new Users { Id = x.Id, Phone = x.Phone, UserName = x.UserName });
+                x => new User { Id = x.Id, Phone = x.Phone, UserName = x.UserName });
 
             if (existingUser.Any(x => x.Phone == userUpdate.Phone) && !string.IsNullOrEmpty(userUpdate.Phone))
             {

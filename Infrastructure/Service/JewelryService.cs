@@ -1,5 +1,6 @@
 ﻿using Application.IRepository;
 using Application.IService;
+using Application.Models;
 using Application.Models.JewelryModels;
 using AutoMapper;
 using Domain.Entities;
@@ -10,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
+using static Utilities.Enum;
 
 namespace Infrastructure.Service
 {
@@ -106,11 +108,42 @@ namespace Infrastructure.Service
                 throw new KeyNotFoundException($"Jewelry with ID '{id}' does not exist.");
             }
 
+            if (jewelry.Status != (int)JewelryStatus.PendingApproval)
+            {
+                throw new AppException($"You are only allowed to delete jewelry with the status '{JewelryStatus.PendingApproval.ToString()}'");
+            }
+
             bool success = await DeleteAsync(id);
             if (!success)
             {
                 throw new AppException("An error occurred while deleting the Jewelry!");
             }
+        }
+
+        public async Task<JewelryModel> UpdateStatusJewelry(UpdateStatusModel statusModel)
+        {
+            var jewelry = await GetByIdAsync(statusModel.Id);
+            if (jewelry == null)
+            {
+                throw new KeyNotFoundException($"Jewelry with ID '{statusModel.Id}' does not exist.");
+            }
+            if (jewelry.Status != (int)JewelryStatus.PendingApproval)
+            {
+                throw new AppException($"The jewelry is not in a valid status for approval!");
+            }
+            if (statusModel.Status != (int)JewelryStatus.AwaitingStockIn
+                && statusModel.Status != (int)JewelryStatus.Cancelled)
+            {
+                throw new AppException($"The jewelry status updated is not in a valid status for approval!");
+            }
+            jewelry.Status = statusModel.Status;
+            bool success = await UpdateFieldAsync(jewelry, x => x.Status);
+            if (!success)
+            {
+                throw new AppException("An error occurred while updating status of jewelry!");
+            }
+            JewelryModel jewelryModel = _mapper.Map<JewelryModel>(jewelry);
+            return jewelryModel;
         }
     }
 }

@@ -10,7 +10,7 @@ using Domain.BaseEntities;
 
 namespace Domain.Entities
 {
-    public class Users : BaseEntity
+    public class User : BaseEntity
     {
         [Required]
         [Description("Mã người dùng")]

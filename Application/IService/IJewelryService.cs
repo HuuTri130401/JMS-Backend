@@ -1,4 +1,5 @@
-﻿using Application.Models.JewelryModels;
+﻿using Application.Models;
+using Application.Models.JewelryModels;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace Application.IService
         Task<JewelryModel> GetJewelryByIdAsync(Guid id);
         Task CreateJewelrAsync(JewelryCreate jewelryCreate);
         Task UpdateJewelrAsync(JewelryUpdate jewelryUpdate);
+        Task<JewelryModel> UpdateStatusJewelry(UpdateStatusModel statusModel);
         Task DeleteJewelryAsync(Guid id);
     }
 }

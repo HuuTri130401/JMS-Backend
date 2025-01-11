@@ -35,12 +35,13 @@ namespace Domain.Entities
         public decimal? SalePrice { get; set; }
 
         /// <summary>
-        /// Trạng thái
-        /// 0 - Chờ duyệt
-        /// 1 - Chờ nhập kho
-        /// 2 - Có thể bán
-        /// 3 - Đã bán
-        /// 4 - Hủy
+        /// 1 - Yêu Cầu Duyệt
+        /// 2 - Chờ Nhập Kho
+        /// 3 - Có Thể Bán
+        /// 4 - Đã Bán
+        /// 5 - Hủy
+        /// 6 - Chờ Xuất Kho
+        /// 7 - Xuất Bỏ
         /// </summary>
         [Required]
         [Description("Trạng thái sản phẩm")] 
@@ -99,16 +100,11 @@ namespace Domain.Entities
         [Description("Nhà cung cấp")] 
         public string? Supplier { get; set; }
 
-        // Liên kết với OrderDetail nếu đã được bán
-<<<<<<< Updated upstream
-        public OrderDetail? OrderDetail { get; set; }
-=======
         // Mỗi Jewelry có thể xuất hiện trong nhiều OrderDetails (dù thực tế bán 1 lần, 
         // nhưng về logic DB, 1-n vẫn hợp lệ).
         public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 
         // -- 1 Jewelry có thể có n InventoryDetails (1 nhập 1 xuất ...)  --
         public List<InventoryDetails> InventoryDetails { get; set; } = new List<InventoryDetails>();
->>>>>>> Stashed changes
     }
 }

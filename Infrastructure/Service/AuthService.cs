@@ -20,7 +20,7 @@ using System.Security.Authentication;
 
 namespace Infrastructure.Service
 {
-    public class AuthService : BaseDomainService<Users, UserSearch>, IAuthService
+    public class AuthService : BaseDomainService<User, UserSearch>, IAuthService
     {
         private readonly IConfiguration _configuration;
 
@@ -29,7 +29,7 @@ namespace Infrastructure.Service
             _configuration = configuration;
         }
 
-        public async Task<string> GenerateJwtToken(Users user)
+        public async Task<string> GenerateJwtToken(User user)
         {
             var jwtSettings = _configuration.GetSection("JwtSettings");
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
@@ -48,7 +48,7 @@ namespace Infrastructure.Service
             if (user.UserRoles != null)
             {
                 var roles = user.UserRoles
-                    .Where(ur => ur.Roles != null) // Đảm bảo Roles không null
+                    .Where(ur => ur.Roles != null) // Đảm bảo Role không null
                     .Select(ur => ur.Roles.RoleName)
                     .Distinct()
                     .ToList();
@@ -92,9 +92,9 @@ namespace Infrastructure.Service
 
         public async Task<UserLoginResponseModel> Login(LoginModel request)
         {
-            Users user = await Queryable
+            User user = await Queryable
                 .Include(u => u.UserRoles) // Nạp UserRoles
-                    .ThenInclude(ur => ur.Roles) // Nạp Roles từ UserRoles
+                    .ThenInclude(ur => ur.Roles) // Nạp Role từ UserRoles
                 .Where(e => e.Deleted == false && (e.UserName == request.UserName))
                 .FirstOrDefaultAsync();
 
@@ -110,7 +110,7 @@ namespace Infrastructure.Service
                 user.RefreshTokenExpiryTime = DateTime.Now.AddDays(180);
                 user.RefreshToken = refreshToken;
                 var refreshTokenExpiryTime = user.RefreshTokenExpiryTime;
-                _unitOfWork.Repository<Users>().UpdateFieldsSave(user, x => x.RefreshToken, x => x.RefreshTokenExpiryTime);
+                _unitOfWork.Repository<User>().UpdateFieldsSave(user, x => x.RefreshToken, x => x.RefreshTokenExpiryTime);
                 await _unitOfWork.SaveAsync();
 
                 return new UserLoginResponseModel()

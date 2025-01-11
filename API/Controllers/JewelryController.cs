@@ -1,4 +1,5 @@
 ﻿using Application.IService;
+using Application.Models;
 using Application.Models.JewelryModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +11,7 @@ using Utilities;
 namespace API.Controllers
 {
     [Description("Jewelry Management")]
-    [Route("api/[controller]")]
+    [Route("api/jewelry")]
     [ApiController]
     [Authorize(Roles = "Admin")]
     public class JewelryController : ControllerBase
@@ -73,6 +74,20 @@ namespace API.Controllers
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK,
                 ResultMessage = "Successfully updated jewelry",
+            };
+        }
+
+        [HttpPut("approval")]
+        [Description("Duyệt trang sức")]
+        public async Task<AppDomainResult> ApprovalJewelry([FromBody] UpdateStatusModel updateStatus)
+        {
+            JewelryModel jewelryModel = await _jewelryService.UpdateStatusJewelry(updateStatus);
+            return new AppDomainResult
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                Data = jewelryModel,
+                ResultMessage = "Successfully updated jewelry status!"
             };
         }
 
