@@ -29,8 +29,10 @@ namespace Infrastructure
             #region Entity_Repo
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IJewelryService, JewelryService>();
+            services.AddScoped<IInventoryService, InventoryService>();
+            services.AddScoped<IInventoryDetailsService, InventoryDetailsService>();
             services.AddTransient<IEmailService, EmailService>();
-            services.AddTransient<IJewelryService, JewelryService>();
 
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddHttpContextAccessor();

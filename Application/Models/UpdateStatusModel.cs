@@ -13,6 +13,6 @@ namespace Application.Models
         public Guid Id { get; set; }
         [Required(ErrorMessage = "Status is required!")]
         public int Status { get; set; }
-        public string? Note { get; set; } 
+        public string? Note { get; set; }
     }
 }

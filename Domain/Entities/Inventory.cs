@@ -13,35 +13,37 @@ namespace Domain.Entities
     public class Inventory : BaseEntity
     {
         [Required]
-        [Description("Mã sản phẩm xuất nhập kho")]
-        public Guid JewelryId { get; set; }
-
-        [ForeignKey("JewelryId")] 
-        [Description("Khóa ngoại tới sản phẩm")]
-        public Jewelry Jewelry { get; set; }
+        [Description("Mã nhập kho")]
+        public string Code { get; set; }
 
         [Description("Loại giao dịch: IN (nhập), OUT (xuất)")]
         public int Type {  get; set; }
 
-        [Description("Trạng thái xuất nhập kho")]
+        [Description("Trạng thái phiếu xuất nhập kho (Draft, Completed, Canceled)")]
         public int Status { get; set; }
 
         [Description("Tham chiếu đến nguồn (nếu cần), ví dụ OrderId, Phiếu nhập...")]
         public Guid? ReferenceId { get; set; }
 
-        [Description("Giá nhập kho")]
-        public decimal ImportPrice { get; set; }
+        [Description("Nhà cung cấp")]
+        public string Supplier { get; set; }
+
+        [Description("Giá nhập kho (Tính từ chi tiết)")]
+        public decimal TotalImportPrice { get; set; }
 
         [Description(" Ngày nhập kho")]
         public DateTimeOffset ImportedAt { get; set; }
 
-        [Description("Nhà cung cấp")]
-        public string Supplier { get; set; }
-
-        [Description("Giá xuất kho")]
-        public decimal ExportPrice { get; set; }
+        [Description("Giá xuất kho (Tính từ chi tiết)")]
+        public decimal TotalExportPrice { get; set; }
 
         [Description("Ngày xuất kho")]
         public DateTimeOffset ExportedAt { get; set; }
+
+        [Description("Ghi chú chung")]
+        public string Note { get; set; }
+
+        // 1 Inventory - n InventoryDetails
+        public List<InventoryDetails> InventoryDetails { get; set; } = new List<InventoryDetails>();
     }
 }

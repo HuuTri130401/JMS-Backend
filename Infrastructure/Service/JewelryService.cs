@@ -123,22 +123,19 @@ namespace Infrastructure.Service
         public async Task<JewelryModel> UpdateStatusJewelry(UpdateStatusModel statusModel)
         {
             var jewelry = await GetByIdAsync(statusModel.Id);
-            if(jewelry == null)
+            if (jewelry == null)
             {
                 throw new KeyNotFoundException($"Jewelry with ID '{statusModel.Id}' does not exist.");
             }
-
-            if(jewelry.Status != (int)JewelryStatus.PendingApproval)
+            if (jewelry.Status != (int)JewelryStatus.PendingApproval)
             {
                 throw new AppException($"The jewelry is not in a valid status for approval!");
             }
-
             if (statusModel.Status != (int)JewelryStatus.AwaitingStockIn
                 && statusModel.Status != (int)JewelryStatus.Cancelled)
             {
                 throw new AppException($"The jewelry status updated is not in a valid status for approval!");
             }
-
             jewelry.Status = statusModel.Status;
             bool success = await UpdateFieldAsync(jewelry, x => x.Status);
             if (!success)

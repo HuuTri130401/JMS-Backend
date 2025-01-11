@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250110065817_update inventory v1")]
-    partial class updateinventoryv1
+    [Migration("20250111141123_Initial DB")]
+    partial class InitialDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,6 +25,68 @@ namespace Infrastructure.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTimeOffset?>("Created")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool?>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset>("ExportedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("ImportedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ReferenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Supplier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalExportPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalImportPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("Updated")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Inventories");
+                });
+
+            modelBuilder.Entity("Domain.Entities.InventoryDetails", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,33 +104,17 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("ExportPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTimeOffset>("ExportedAt")
-                        .HasColumnType("datetimeoffset");
-
                     b.Property<decimal>("ImportPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTimeOffset>("ImportedAt")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<Guid>("InventoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("JewelryId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ReferenceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Supplier")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
 
                     b.Property<DateTimeOffset?>("Updated")
                         .HasColumnType("datetimeoffset");
@@ -78,9 +124,11 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InventoryId");
+
                     b.HasIndex("JewelryId");
 
-                    b.ToTable("Inventories");
+                    b.ToTable("InventoryDetails");
                 });
 
             modelBuilder.Entity("Domain.Entities.Jewelry", b =>
@@ -442,7 +490,7 @@ namespace Infrastructure.Migrations
                             Id = new Guid("aac63b91-beb8-4de4-b050-f2888fdff282"),
                             Address = "Binh Phuoc",
                             Code = "AD-01",
-                            Created = new DateTimeOffset(new DateTime(2025, 1, 10, 13, 58, 16, 593, DateTimeKind.Unspecified).AddTicks(5169), new TimeSpan(0, 0, 0, 0, 0)),
+                            Created = new DateTimeOffset(new DateTime(2025, 1, 11, 21, 11, 22, 874, DateTimeKind.Unspecified).AddTicks(3770), new TimeSpan(0, 0, 0, 0, 0)),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Deleted = false,
                             Email = "admin@gmail.com",
@@ -513,13 +561,21 @@ namespace Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entities.Inventory", b =>
+            modelBuilder.Entity("Domain.Entities.InventoryDetails", b =>
                 {
+                    b.HasOne("Domain.Entities.Inventory", "Inventory")
+                        .WithMany("InventoryDetails")
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.Jewelry", "Jewelry")
-                        .WithMany("InventoryMovements")
+                        .WithMany("InventoryDetails")
                         .HasForeignKey("JewelryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Inventory");
 
                     b.Navigation("Jewelry");
                 });
@@ -562,9 +618,14 @@ namespace Infrastructure.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Inventory", b =>
+                {
+                    b.Navigation("InventoryDetails");
+                });
+
             modelBuilder.Entity("Domain.Entities.Jewelry", b =>
                 {
-                    b.Navigation("InventoryMovements");
+                    b.Navigation("InventoryDetails");
 
                     b.Navigation("OrderDetails");
                 });

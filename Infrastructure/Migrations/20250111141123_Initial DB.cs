@@ -5,10 +5,37 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Migrations
 {
-    public partial class InitDB : Migration
+    public partial class InitialDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Inventories",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    ReferenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Supplier = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TotalImportPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ImportedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    TotalExportPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ExportedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Created = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Updated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventories", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Jewelries",
                 columns: table => new
@@ -125,17 +152,14 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Inventories",
+                name: "InventoryDetails",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InventoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     JewelryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    ReferenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     ImportPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ImportedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    Supplier = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExportPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Updated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
@@ -145,9 +169,15 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Inventories", x => x.Id);
+                    table.PrimaryKey("PK_InventoryDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Inventories_Jewelries_JewelryId",
+                        name: "FK_InventoryDetails_Inventories_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryDetails_Jewelries_JewelryId",
                         column: x => x.JewelryId,
                         principalTable: "Jewelries",
                         principalColumn: "Id",
@@ -231,7 +261,7 @@ namespace Infrastructure.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Address", "Birthday", "Code", "Created", "CreatedBy", "Deleted", "Email", "FirstName", "FullName", "Gender", "IdentityCard", "IdentityCardAddress", "IdentityCardDate", "IsActive", "IsAdmin", "LastName", "Password", "Phone", "PurchaseRevenue", "RefreshToken", "RefreshTokenExpiryTime", "Status", "Updated", "UpdatedBy", "UserName" },
-                values: new object[] { new Guid("aac63b91-beb8-4de4-b050-f2888fdff282"), "Binh Phuoc", null, "AD-01", new DateTimeOffset(new DateTime(2025, 1, 10, 13, 50, 38, 381, DateTimeKind.Unspecified).AddTicks(6834), new TimeSpan(0, 0, 0, 0, 0)), new Guid("00000000-0000-0000-0000-000000000000"), false, "admin@gmail.com", "Tri", "Tran Huu Tri", 1, "12345", "Binh Phuoc", new DateTimeOffset(new DateTime(2015, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), true, true, "Tran", "FF9A32AB4A6E687FF64C2A139A9D04BD3AD58F10", "0333444555", 0m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, null, null, "admin" });
+                values: new object[] { new Guid("aac63b91-beb8-4de4-b050-f2888fdff282"), "Binh Phuoc", null, "AD-01", new DateTimeOffset(new DateTime(2025, 1, 11, 21, 11, 22, 874, DateTimeKind.Unspecified).AddTicks(3770), new TimeSpan(0, 0, 0, 0, 0)), new Guid("00000000-0000-0000-0000-000000000000"), false, "admin@gmail.com", "Tri", "Tran Huu Tri", 1, "12345", "Binh Phuoc", new DateTimeOffset(new DateTime(2015, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 7, 0, 0, 0)), true, true, "Tran", "FF9A32AB4A6E687FF64C2A139A9D04BD3AD58F10", "0333444555", 0m, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, null, null, "admin" });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
@@ -239,8 +269,13 @@ namespace Infrastructure.Migrations
                 values: new object[] { new Guid("76fc0760-be56-4c90-b09c-fde6436050f9"), null, null, false, true, new Guid("254a86dd-3e41-45b8-bb91-f97ee3b17c70"), null, null, new Guid("aac63b91-beb8-4de4-b050-f2888fdff282") });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventories_JewelryId",
-                table: "Inventories",
+                name: "IX_InventoryDetails_InventoryId",
+                table: "InventoryDetails",
+                column: "InventoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryDetails_JewelryId",
+                table: "InventoryDetails",
                 column: "JewelryId");
 
             migrationBuilder.CreateIndex(
@@ -267,13 +302,16 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Inventories");
+                name: "InventoryDetails");
 
             migrationBuilder.DropTable(
                 name: "OrderDetails");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
+
+            migrationBuilder.DropTable(
+                name: "Inventories");
 
             migrationBuilder.DropTable(
                 name: "Jewelries");

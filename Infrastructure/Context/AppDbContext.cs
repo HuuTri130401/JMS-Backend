@@ -68,11 +68,10 @@ namespace Infrastructure.Context
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<UserRoles> UserRoles { get; set; }
         public DbSet<Jewelry> Jewelries { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<InventoryDetails> InventoryDetails { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
-
     }
 }
