@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Application.Models.InventoryModels
 {
-    public class InventoryImportProcessApproval
+    public class InventoryImportProcessApproval : UpdateModel
     {
-        [Required(ErrorMessage = "InventoryId is required!")]
-        public Guid InventoryId { get; set; }
+        //[Required(ErrorMessage = "InventoryId is required!")]
+        //public Guid InventoryId { get; set; }
         [Required(ErrorMessage = "Status is required!")]
         public int Status { get; set; }
         public string? Note { get; set; }
