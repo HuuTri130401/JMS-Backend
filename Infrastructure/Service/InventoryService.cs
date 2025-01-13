@@ -197,10 +197,10 @@ namespace Infrastructure.Service
             await _unitOfWork.BeginTransactionAsync();
             try
             {
-                Inventory inventory = await GetByIdAsync(model.InventoryId);
+                Inventory inventory = await GetByIdAsync(model.Id);
                 if (inventory == null)
                 {
-                    throw new KeyNotFoundException($"Inventory with ID '{model.InventoryId}' does not exist!");
+                    throw new KeyNotFoundException($"Inventory with ID '{model.Id}' does not exist!");
                 }
 
                 if (model.JewelrySellPriceProcess == null)
@@ -213,13 +213,13 @@ namespace Infrastructure.Service
                     throw new AppException($"Inventory must have status {InventoryEnum.Temporary.ToString()} to update!");
                 }
 
-                if (inventory.Status != (int)InventoryEnum.Approved
-                    && inventory.Status != (int)InventoryEnum.Approved)
+                if (model.Status != (int)InventoryEnum.Approved
+                    && model.Status != (int)InventoryEnum.NotApproved)
                 {
                     throw new AppException($"Inventory is not in a valid status for update");
                 }
 
-                if (inventory.Status == (int)InventoryEnum.Approved)
+                if (model.Status == (int)InventoryEnum.Approved)
                 {
                     IList<Jewelry> jewelries = await _jewelryService
                         .GetListAsync(x => x.Deleted == false
