@@ -34,6 +34,7 @@ namespace API
             //Inventory Detail
             CreateMap<InventoryDetailsImportCreate, InventoryDetails>().ReverseMap();
             CreateMap<InventoryDetailsExportCreate, InventoryDetails>().ReverseMap();
+            CreateMap<InventoryDetailsModel, InventoryDetails>().ReverseMap();
         }
     }
 }

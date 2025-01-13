@@ -1,13 +1,17 @@
 ﻿using Application.IRepository;
 using Application.IService;
+using Application.Models;
 using Application.Models.InventoryModels;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Utilities;
 using static Utilities.Enum;
@@ -23,6 +27,100 @@ namespace Infrastructure.Service
             _jewelryService = jewelryService;
             _inventoryDetailsService = inventoryDetailsService;
         }
+
+        public async Task<PagedList<InventoryModel>> GetPagedListInventories(InventorySearch inventorySearch)
+        {
+            PagedList<Inventory> pagedList = await GetPagedListData(inventorySearch);
+            PagedList<InventoryModel> pagedListModel = _mapper.Map<PagedList<InventoryModel>>(pagedList);
+            return pagedListModel;
+        }
+
+        protected override string GetStoreProcName()
+        {
+            return "GetPagedData_Innventory";
+        }
+
+        public async Task<Inventory> GetInventoryByIdAsync(Guid inventoryId)
+        {
+            // Lấy dữ liệu từ các repository
+            IQueryable<Inventory> inventoryQuery = _unitOfWork
+                .Repository<Inventory>()
+                .GetQueryable()
+                .AsQueryable();
+
+            IQueryable<InventoryDetails> detailsQuery = _unitOfWork
+                .Repository<InventoryDetails>()
+                .GetQueryable()
+                .AsQueryable();
+
+            IQueryable<Jewelry> jewelryQuery = _unitOfWork
+                .Repository<Jewelry>()
+                .GetQueryable()
+                .AsQueryable();
+
+            // Thực hiện JOIN các bảng
+            var inventoryWithDetails = from inventory in inventoryQuery
+                                       where inventory.Id == inventoryId && inventory.Deleted == false
+                                       join detail in detailsQuery on inventory.Id equals detail.InventoryId into detailGroup
+                                       from detail in detailGroup.DefaultIfEmpty()
+                                       join jewelry in jewelryQuery on detail.JewelryId equals jewelry.Id into jewelryGroup
+                                       from jewelry in jewelryGroup.DefaultIfEmpty()
+                                       select new
+                                       {
+                                           Inventory = inventory,
+                                           Detail = detail,
+                                           Jewelry = jewelry
+                                       };
+
+            // Lấy dữ liệu từ CSDL
+            var groupedData = await inventoryWithDetails.ToListAsync();
+
+            var inventoryData = groupedData
+                .Select(x => x.Inventory)
+                .FirstOrDefault();
+
+            if (inventoryData != null)
+            {
+                var inventoryDetails = groupedData
+                    .Where(x => x.Detail != null) // Chỉ lấy bản ghi có Detail
+                    .Select(d => new InventoryDetails
+                    {
+                        Id = d.Detail.Id,
+                        InventoryId = d.Detail.InventoryId,
+                        JewelryId = d.Detail.JewelryId,
+                        ImportPrice = d.Detail.ImportPrice,
+                        ExportPrice = d.Detail.ExportPrice,
+                        Jewelry = d.Jewelry
+                    })
+                    .ToList();
+
+                inventoryData.InventoryDetails = inventoryDetails;
+
+                return inventoryData;
+            }
+            else
+            {
+                throw new KeyNotFoundException($"Inventory with ID '{inventoryId}' does not exist!");
+            }
+        }
+
+        //Cách này chậm
+        //Inventory inventory = await Queryable //AsNoTracking(): không theo dõi entity trong DbContext
+        //    .Include(id => id.InventoryDetails)      // deferred execution - Query sẽ được dịch thành SQL
+        //        .ThenInclude(j => j.Jewelry)         // Include giống join, làm chậm nếu nhiều data
+        //    .Where(x => x.Deleted == false && x.Id == inventoryId)
+        //    .FirstOrDefaultAsync();
+
+        //Cách này trung bình
+        //var inventory = await Queryable
+        //    .Where(x => x.Deleted == false && x.Id == inventoryId)
+        //    .ProjectTo<InventoryModel>(_mapper.ConfigurationProvider)
+        //    .FirstOrDefaultAsync();
+        //if (inventory != null)
+        //{
+        //    return inventory;
+        //}
+        //throw new KeyNotFoundException($"Inventory with ID '{id}' does not exist!");
 
         public Task CreateExportInventoryAsync(InventoryExportCreate inventoryExportCreate)
         {
@@ -57,10 +155,10 @@ namespace Infrastructure.Service
                             .Select(j => j.JewelryId) // Lấy List JewelryId từ inventoryDetails
                             .Contains(x.Id)); // Kiểm tra Id của Jewelry hiện tại(x.Id) có được
                                               // lấy ra từ list JewelryId trong inventoryDetails
-            
-            if(jewelries.Any(j => j.Status != (int)JewelryStatus.AwaitingStockIn))
+
+            if (jewelries.Any(j => j.Status != (int)JewelryStatus.AwaitingStockIn))
             {
-                throw new AppException("All jewelries must have status 'AwaitingStockIn'.");
+                throw new AppException($"All jewelries must have status '{JewelryStatus.AwaitingStockIn.ToString()}'.");
             }
 
             inventory.TotalImportPrice = inventoryImportCreate
@@ -87,37 +185,80 @@ namespace Infrastructure.Service
                 await _unitOfWork.SaveAsync();
                 await _unitOfWork.CommitAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _unitOfWork.RollBackAsync();
                 throw new AppException("An error occurred while adding new inventory! " + ex.Message);
             }
-
-            //jewelries
-            //    .Where(p =>
-            //        p.Status == (int)JewelryStatus.PendingApproval ||
-            //        p.Status == (int)JewelryStatus.AwaitingStockIn
-            //    )
-            //    .ToList()
-            //    .ForEach(x => x.Status = (int)JewelryStatus.AwaitingStockIn);
         }
 
-        public Task DeleteInventoryAsync(Guid id)
+        public async Task ProcessInventory(InventoryImportProcessApproval model)
         {
-            throw new NotImplementedException();
-        }
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                Inventory inventory = await GetByIdAsync(model.InventoryId);
+                if (inventory == null)
+                {
+                    throw new KeyNotFoundException($"Inventory with ID '{model.InventoryId}' does not exist!");
+                }
 
-        public Task<InventoryModel> GetInventoryByIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
+                if (model.JewelrySellPriceProcess == null)
+                {
+                    throw new AppException("Inventory must contain Jewelries for process");
+                }
 
-        public Task<PagedList<InventoryModel>> GetPagedListInventories(InventorySearch inventorySearch)
-        {
-            throw new NotImplementedException();
+                if (inventory.Status != (int)InventoryEnum.Temporary)
+                {
+                    throw new AppException($"Inventory must have status {InventoryEnum.Temporary.ToString()} to update!");
+                }
+
+                if (inventory.Status != (int)InventoryEnum.Approved
+                    && inventory.Status != (int)InventoryEnum.Approved)
+                {
+                    throw new AppException($"Inventory is not in a valid status for update");
+                }
+
+                if (inventory.Status == (int)InventoryEnum.Approved)
+                {
+                    IList<Jewelry> jewelries = await _jewelryService
+                        .GetListAsync(x => x.Deleted == false
+                            && model.JewelrySellPriceProcess
+                            .Select(j => j.JewelryId)
+                            .Contains(x.Id));
+
+                    jewelries
+                        .ToList()
+                        .ForEach(x =>
+                        {
+                            var jewelry = model.JewelrySellPriceProcess
+                                .FirstOrDefault(w => w.JewelryId == x.Id);
+                            if (jewelry != null)
+                            {
+                                x.Status = (int)JewelryStatus.AvailableForSale;
+                                x.SalePrice = jewelry.SalePrice;
+                            }
+                        });
+                    await _jewelryService.UpdateAsync(jewelries);
+                }
+
+                await UpdateAsync(inventory);
+                await _unitOfWork.SaveAsync();
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollBackAsync();
+                throw new AppException("An error occurred while process inventory! " + ex.Message);
+            }
         }
 
         public Task UpdateInventoryAsync(InventoryUpdate inventoryUpdate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteInventoryAsync(Guid id)
         {
             throw new NotImplementedException();
         }

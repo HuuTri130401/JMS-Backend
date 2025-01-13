@@ -12,9 +12,6 @@ namespace Application.Models.InventoryDetailModels
 {
     public class InventoryDetailsCreate : CreateModel
     {
-        //[Required(ErrorMessage = "InventoryId is required!")]
-        //public Guid InventoryId { get; set; }
-
         [Required(ErrorMessage = "JewelryId is required!")]
         public Guid JewelryId { get; set; }
     }

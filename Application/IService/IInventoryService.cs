@@ -1,4 +1,5 @@
-﻿using Application.Models.InventoryModels;
+﻿using Application.Models;
+using Application.Models.InventoryModels;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,10 +13,11 @@ namespace Application.IService
     public interface IInventoryService : IGenericDomainService<Inventory, InventorySearch>
     {
         Task<PagedList<InventoryModel>> GetPagedListInventories(InventorySearch inventorySearch);
-        Task<InventoryModel> GetInventoryByIdAsync(Guid id);
+        Task<Inventory> GetInventoryByIdAsync(Guid id);
         Task CreateImportInventoryAsync(InventoryImportCreate inventoryImportCreate);
         Task CreateExportInventoryAsync(InventoryExportCreate inventoryExportCreate);
         Task UpdateInventoryAsync(InventoryUpdate inventoryUpdate);
+        Task ProcessInventory(InventoryImportProcessApproval statusModel);
         Task DeleteInventoryAsync(Guid id);
     }
 }
