@@ -9,5 +9,6 @@ namespace Application.Models.InventoryModels
 {
     public class InventorySearch : BaseSearch
     {
+
     }
 }

@@ -29,6 +29,5 @@ namespace Domain.Entities
 
         [Description("Giá xuất kho")]
         public decimal ExportPrice { get; set; }
-
     }
 }

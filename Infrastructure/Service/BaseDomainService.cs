@@ -148,6 +148,13 @@ namespace Infrastructure.Service
             return pagedList;
         }
 
+        public virtual async Task<E> GetDetailUsingStoredProcAsync(Guid id, string storedProcedure)
+        {
+            var result = await _unitOfWork.Repository<E>()
+                .ExecuteQueryAsync(storedProcedure, id);
+            return result;
+        }
+
         protected virtual Expression<Func<E, bool>> GetExpression(T baseSearch)
         {
             return e => !(bool)e.Deleted;

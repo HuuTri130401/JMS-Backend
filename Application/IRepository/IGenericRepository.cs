@@ -27,6 +27,7 @@ namespace Application.IRepository
         void SetEntityState(T item, EntityState entityState);
         EntityEntry<T> Entry(T item);
         Task<PagedList<T>> ExcuteQueryPagingAsync(string commandText, SqlParameter[] sqlParameters);
+        Task<T> ExecuteQueryAsync(string commandText, Guid id);
         bool UpdateFieldsSave(T entity, params Expression<Func<T, object>>[] includeProperties);
         Task<bool> UpdateFieldsSaveAsync(T entity, params Expression<Func<T, object>>[] includeProperties);
     }

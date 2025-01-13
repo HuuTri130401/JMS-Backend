@@ -53,27 +53,27 @@ namespace Utilities
             /// <summary>
             ///Có Thể Bán
             /// </summary>
-            AvailableForSale = 3,  
+            AvailableForSale = 3,
 
             /// <summary>
             /// Đã Bán
             /// </summary>
-            Sold = 4,              
+            Sold = 4,
 
             /// <summary>
             /// Hủy
             /// </summary>
-            Cancelled = 5,         
+            Cancelled = 5,
 
             /// <summary>
             /// Chờ Xuất Kho
             /// </summary>
-            AwaitingStockOut = 6,  
+            AwaitingStockOut = 6,
 
             /// <summary>
             /// Xuất Bỏ
             /// </summary>
-            Discarded = 7          
+            Discarded = 7
         }
 
         /// <summary>
@@ -124,6 +124,25 @@ namespace Utilities
                 new EnumObject { Key = (int)JewelryStatus.Cancelled, Title = "Cancelled"},
                 new EnumObject { Key = (int)JewelryStatus.AwaitingStockOut, Title = "Awaiting Stock Out"},
                 new EnumObject { Key = (int)JewelryStatus.Discarded, Title = "Discarded"},
+            };
+        }
+
+        public static List<EnumObject> GetInventortyStatusName()
+        {
+            return new List<EnumObject>()
+            {
+                new EnumObject { Key = (int)InventoryEnum.Temporary, Title = "Temporary"},
+                new EnumObject { Key = (int)InventoryEnum.Approved, Title = "Approved"},
+                new EnumObject { Key = (int)InventoryEnum.NotApproved, Title = "Not Approved"},
+            };
+        }
+
+        public static List<EnumObject> GetInventortyTypeName()
+        {
+            return new List<EnumObject>()
+            {
+                new EnumObject { Key = (int)InventoryTypeEnum.Import, Title = "Import"},
+                new EnumObject { Key = (int)InventoryTypeEnum.Export, Title = "Export"},
             };
         }
     }

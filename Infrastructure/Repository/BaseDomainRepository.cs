@@ -12,6 +12,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
+using Org.BouncyCastle.Pqc.Crypto.Hqc;
 
 namespace Infrastructure.Repository
 {
@@ -155,6 +156,37 @@ namespace Infrastructure.Repository
         public void Update(List<T> entities)
         {
             _context.Set<T>().UpdateRange(entities);
+        }
+
+        public async Task<T> ExecuteQueryAsync(string commandText, Guid id)
+        {
+            return await Task.Run(() =>
+            {
+                DataTable dataTable = new DataTable();
+                SqlConnection connection = null;
+                SqlCommand command = null;
+                try
+                {
+                    connection = (SqlConnection)_context.Database.GetDbConnection();
+                    command = connection.CreateCommand();
+                    connection.Open();
+                    command.CommandText = commandText;
+                    command.Parameters.Add(new SqlParameter("@Id", SqlDbType.UniqueIdentifier) { Value = id });
+                    command.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
+                    sqlDataAdapter.Fill(dataTable);
+                    List<T> t = MappingDataTable.ConvertToList<T>(dataTable);
+                    return t.FirstOrDefault();
+                }
+                finally
+                {
+                    if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                        connection.Close();
+
+                    if (command != null)
+                        command.Dispose();
+                }
+            });
         }
     }
 }
