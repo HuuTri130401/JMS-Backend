@@ -1,4 +1,5 @@
 ﻿using Application.Models.InventoryDetailModels;
+using Application.Models.JewelryModels;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace Application.Models.InventoryModels
         public decimal TotalExportPrice { get; set; }
         public DateTimeOffset ExportedAt { get; set; }
         public string Note { get; set; }
-        public List<InventoryDetailsModel> InventoryDetails { get; set; } = new List<InventoryDetailsModel>();
+        public List<InventoryDetailsModel> InventoryDetails { get; set; }
+        public List<JewelryModel> JewelryModels { get; set;}
     }
 }
