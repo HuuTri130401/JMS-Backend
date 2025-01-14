@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Application.IService
 {
-    public interface IAuthService : IGenericDomainService<Users, UserSearch>
+    public interface IAuthService : IGenericDomainService<User, UserSearch>
     {
         Task<string> GenerateRefreshToken();
-        Task<string> GenerateJwtToken(Users user);
+        Task<string> GenerateJwtToken(User user);
         Task<UserLoginResponseModel> Login(LoginModel request);
     }
 }

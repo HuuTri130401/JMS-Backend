@@ -148,6 +148,13 @@ namespace Infrastructure.Service
             return pagedList;
         }
 
+        public virtual async Task<E> GetDetailUsingStoredProcAsync(Guid id, string storedProcedure)
+        {
+            var result = await _unitOfWork.Repository<E>()
+                .ExecuteQueryAsync(storedProcedure, id);
+            return result;
+        }
+
         protected virtual Expression<Func<E, bool>> GetExpression(T baseSearch)
         {
             return e => !(bool)e.Deleted;
@@ -285,6 +292,17 @@ namespace Infrastructure.Service
                 return exists;
             }
             throw new Exception(id + " not exists!");
+        }
+
+        public async Task<int> GetTotalQuantity()
+        {
+            //GetQueryable(): Trả về một IQueryable<E> để bạn có thể
+            //      thực hiện các truy vấn LINQ trên thực thể E.
+            var totalQuantity = await _unitOfWork
+                .Repository<E>()
+                .GetQueryable()
+                .CountAsync(); // Đếm tổng số lượng
+            return totalQuantity;
         }
     }
 }

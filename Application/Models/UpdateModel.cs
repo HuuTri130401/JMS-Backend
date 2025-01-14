@@ -9,7 +9,7 @@ namespace Application.Models
 {
     public class UpdateModel 
     {
-        [Required]
+        [Required(ErrorMessage = "Id is required for updating")]
         public Guid Id { get; set; }
         public DateTimeOffset updated
         {

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Infrastructure
@@ -29,6 +30,9 @@ namespace Infrastructure
             #region Entity_Repo
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IJewelryService, JewelryService>();
+            services.AddScoped<IInventoryService, InventoryService>();
+            services.AddScoped<IInventoryDetailsService, InventoryDetailsService>();
             services.AddTransient<IEmailService, EmailService>();
 
             //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -55,6 +59,12 @@ namespace Infrastructure
                     ValidAudience = jwtSettings["Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
                 };
+            });
+
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.WriteIndented = true;
             });
         }
     }
