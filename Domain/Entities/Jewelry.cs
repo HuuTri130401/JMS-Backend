@@ -101,9 +101,9 @@ namespace Domain.Entities
 
         // Mỗi Jewelry có thể xuất hiện trong nhiều OrderDetails (dù thực tế bán 1 lần, 
         // nhưng về logic DB, 1-n vẫn hợp lệ).
-        public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+        public List<OrderDetail> OrderDetails { get; set; }
 
         // -- 1 Jewelry có thể có n InventoryDetails (1 nhập 1 xuất ...)  --
-        public List<InventoryDetails> InventoryDetails { get; set; } = new List<InventoryDetails>();
+        public List<InventoryDetails> InventoryDetails { get; set; }
     }
 }

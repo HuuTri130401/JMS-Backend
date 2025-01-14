@@ -44,14 +44,6 @@ namespace Domain.Entities
         public string Note { get; set; }
 
         // 1 Inventory - n InventoryDetails
-        public List<InventoryDetails> InventoryDetails { get; set; } = new List<InventoryDetails>();
-        
-        /// <summary>
-        /// Not Mapped
-        /// </summary>
-        [NotMapped]
-        public string TypeName { get; set; }        
-        [NotMapped]
-        public string StatusName { get; set; }
+        public List<InventoryDetails> InventoryDetails { get; set; }
     }
 }

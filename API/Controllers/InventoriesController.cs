@@ -69,7 +69,7 @@ namespace API.Controllers
         [Description("Cập nhật xuất/ nhập kho")]
         public async Task<AppDomainResult> UpdateStatus(InventoryImportProcessApproval statusModel)
         {
-            await _inventoryService.ProcessInventory(statusModel);
+            await _inventoryService.ProcessImportInventory(statusModel);
             return new AppDomainResult
             {
                 Success = true,

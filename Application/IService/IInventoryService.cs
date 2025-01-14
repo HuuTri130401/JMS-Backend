@@ -13,11 +13,11 @@ namespace Application.IService
     public interface IInventoryService : IGenericDomainService<Inventory, InventorySearch>
     {
         Task<PagedList<InventoryModel>> GetPagedListInventories(InventorySearch inventorySearch);
-        Task<Inventory> GetInventoryByIdAsync(Guid id);
+        Task<InventoryModel> GetInventoryByIdAsync(Guid id);
         Task CreateImportInventoryAsync(InventoryImportCreate inventoryImportCreate);
         Task CreateExportInventoryAsync(InventoryExportCreate inventoryExportCreate);
         Task UpdateInventoryAsync(InventoryUpdate inventoryUpdate);
-        Task ProcessInventory(InventoryImportProcessApproval statusModel);
+        Task ProcessImportInventory(InventoryImportProcessApproval statusModel);
         Task DeleteInventoryAsync(Guid id);
     }
 }

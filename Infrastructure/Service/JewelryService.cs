@@ -108,9 +108,10 @@ namespace Infrastructure.Service
                 throw new KeyNotFoundException($"Jewelry with ID '{id}' does not exist.");
             }
 
-            if (jewelry.Status != (int)JewelryStatus.PendingApproval)
+            if (jewelry.Status != (int)JewelryStatus.PendingApproval && jewelry.Status != (int)JewelryStatus.Approved)
             {
-                throw new AppException($"You are only allowed to delete jewelry with the status '{JewelryStatus.PendingApproval.ToString()}'");
+                throw new AppException($"You are only allowed to delete jewelry with the status " +
+                    $"'{JewelryStatus.PendingApproval.ToString()}' or '{JewelryStatus.Approved.ToString()}'");
             }
 
             bool success = await DeleteAsync(id);
@@ -131,7 +132,7 @@ namespace Infrastructure.Service
             {
                 throw new AppException($"The jewelry is not in a valid status for approval!");
             }
-            if (statusModel.Status != (int)JewelryStatus.AwaitingStockIn
+            if (statusModel.Status != (int)JewelryStatus.Approved
                 && statusModel.Status != (int)JewelryStatus.Cancelled)
             {
                 throw new AppException($"The jewelry status updated is not in a valid status for approval!");

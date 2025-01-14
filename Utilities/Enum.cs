@@ -73,7 +73,11 @@ namespace Utilities
             /// <summary>
             /// Xuất Bỏ
             /// </summary>
-            Discarded = 7
+            Discarded = 7,
+            /// <summary>
+            /// Đã duyệt  -- Bổ sung sau
+            /// </summary>
+            Approved = 8
         }
 
         /// <summary>
@@ -124,6 +128,7 @@ namespace Utilities
                 new EnumObject { Key = (int)JewelryStatus.Cancelled, Title = "Cancelled"},
                 new EnumObject { Key = (int)JewelryStatus.AwaitingStockOut, Title = "Awaiting Stock Out"},
                 new EnumObject { Key = (int)JewelryStatus.Discarded, Title = "Discarded"},
+                new EnumObject { Key = (int)JewelryStatus.Approved, Title = "Approved"},
             };
         }
 
