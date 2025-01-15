@@ -138,7 +138,6 @@ namespace Infrastructure.Service
             inventory.Type = (int)InventoryTypeEnum.Import;
             inventory.Status = (int)InventoryEnum.Temporary;
             inventory.Code = CodeGenerator.GenerateCode("IMPORT", 4);
-            //inventory.ImportedAt = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7));
 
             List<InventoryDetails> inventoryDetails = _mapper.Map<List<InventoryDetails>>
                                         (inventoryImportCreate.InventoryDetailsImportCreates);
@@ -222,7 +221,7 @@ namespace Infrastructure.Service
                     .ToList();
 
                 // So sánh hai danh sách
-                bool isMatching = !inventoryJewelryIds.Except(modelJewelryIds).Any() 
+                bool isMatching = !inventoryJewelryIds.Except(modelJewelryIds).Any()
                                 && !modelJewelryIds.Except(inventoryJewelryIds).Any();
 
                 if (!isMatching)
@@ -241,6 +240,7 @@ namespace Infrastructure.Service
                     throw new AppException($"Inventory is not in a valid status for update");
                 }
 
+                // Cập nhật Approved
                 if (model.Status == (int)InventoryEnum.Approved)
                 {
                     inventory.Status = (int)InventoryEnum.Approved;
@@ -268,6 +268,7 @@ namespace Infrastructure.Service
                     await _jewelryService.UpdateAsync(jewelries);
                 }
 
+                // Cập nhật NotApproved
                 if (model.Status == (int)InventoryEnum.NotApproved)
                 {
                     inventory.Status = (int)InventoryEnum.NotApproved;
@@ -307,19 +308,76 @@ namespace Infrastructure.Service
             }
         }
 
+        public Task CreateExportInventoryAsync(InventoryExportCreate inventoryExportCreate)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task UpdateInventoryAsync(InventoryUpdate inventoryUpdate)
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteInventoryAsync(Guid id)
+        public async Task DeleteInventoryAsync(Guid id)
         {
-            throw new NotImplementedException();
-        }
+            await _unitOfWork.BeginTransactionAsync();
+            try
+            {
+                //Cập nhật Inventory
+                Inventory inventory = await GetByIdAsync(id);
+                if (inventory == null)
+                {
+                    throw new KeyNotFoundException($"Inventory with ID '{id}' does not exist!");
+                }
 
-        public Task CreateExportInventoryAsync(InventoryExportCreate inventoryExportCreate)
-        {
-            throw new NotImplementedException();
+                if (inventory.Status != (int)InventoryEnum.Temporary)
+                {
+                    throw new AppException("Only temporarty inventory can be deleted");
+                }
+                inventory.Deleted = true;
+                inventory.Updated = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7));
+
+                //Cập nhật Inventory Detail
+                var inventoryDetails = _unitOfWork
+                    .Repository<InventoryDetails>()
+                    .GetQueryable()
+                    .AsNoTracking()
+                    .Where(invdetail => invdetail.InventoryId == inventory.Id && invdetail.Deleted == false)
+                    .ToList();
+
+                inventoryDetails.ForEach(x =>
+                {
+                    x.Deleted = true;
+                    x.Updated = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7));
+                });
+
+                //Cập nhật Jewelry
+                var inventoryJewelryIds = inventoryDetails
+                    .Select(x => x.JewelryId)
+                    .ToList();
+
+                IList<Jewelry> jewelries = await _jewelryService
+                    .GetListAsync(x => x.Deleted == false && inventoryJewelryIds.Contains(x.Id));
+                jewelries.ToList().ForEach(x =>
+                {
+                    x.Status = (int)JewelryStatus.Approved;
+                });
+
+                await UpdateAsync(inventory);
+                await _inventoryDetailsService.UpdateFieldAsync(inventoryDetails.ToList(),
+                        x => x.Deleted,
+                        x => x.Updated);
+                await _jewelryService.UpdateFieldAsync(jewelries.ToList(), x => x.Status);
+
+                //Lưu thay đổi
+                await _unitOfWork.SaveAsync();
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RollBackAsync();
+                throw new AppException("An error occurred while deleted inventory! " + ex.Message);
+            }
         }
     }
 }

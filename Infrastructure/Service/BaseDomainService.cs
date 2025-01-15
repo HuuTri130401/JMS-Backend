@@ -296,7 +296,7 @@ namespace Infrastructure.Service
 
         public async Task<int> GetTotalQuantity()
         {
-            //GetQueryable(): Trả về một IQueryable<E> để bạn có thể
+            //GetQueryable(): Trả về một IQueryable<E> để có thể
             //      thực hiện các truy vấn LINQ trên thực thể E.
             var totalQuantity = await _unitOfWork
                 .Repository<E>()
