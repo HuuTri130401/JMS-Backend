@@ -77,5 +77,18 @@ namespace API.Controllers
                 ResultMessage = "Successfully updated status inventory"
             };
         }
+
+        [HttpDelete("{id}")]
+        [Description("Xóa phiên nhập kho")]
+        public async Task<AppDomainResult> DeleteIndenventory(Guid id)
+        {
+            await _inventoryService.DeleteInventoryAsync(id);
+            return new AppDomainResult
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                ResultMessage = "Successfully deleted inventory"
+            };
+        }
     }
 }
