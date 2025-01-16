@@ -14,12 +14,12 @@ namespace Domain.Entities
         [Required]
         [StringLength(100)]
         [Description("Tên sản phẩm")]
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
 
         [Required]
         [StringLength(50)]
         [Description("Mã sản phẩm")]
-        public string Code { get; set; } = string.Empty;
+        public string Code { get; set; }
 
         [Description("Mô tả chi tiết")]
         public string? Description { get; set; } 
@@ -67,19 +67,19 @@ namespace Domain.Entities
 
         [StringLength(50)]
         [Description("Mã SKU (Stock Keeping Unit)")]
-        public string SKU { get; set; } = string.Empty;
+        public string SKU { get; set; } 
 
         [Required]
         [StringLength(50)]
         [Description("Chất liệu (Vàng, Bạc, Bạch Kim, v.v.)")]
-        public string Material { get; set; } = string.Empty;
+        public string Material { get; set; }
 
         [Description("Trọng lượng (gram)")]
         public decimal Weight { get; set; }
 
         [StringLength(50)]
         [Description("Loại đá quý (Kim cương, Ruby, Sapphire, v.v.)")]
-        public string Gemstone { get; set; } = string.Empty;
+        public string Gemstone { get; set; }
 
         [StringLength(50)]
         [Description("Kích thước (Ví dụ: 15cm, 20mm, Size 6, v.v.)")]

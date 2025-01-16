@@ -91,8 +91,18 @@ namespace Infrastructure.Service
                 throw new KeyNotFoundException($"Jewelry with ID '{jewelryUpdate.Id}' does not exist.");
             }
 
-            var item = _mapper.Map<Jewelry>(jewelryUpdate);
-            bool success = await UpdateAsync(item);
+            if(jewelry.Status != (int)JewelryStatus.PendingApproval 
+                && jewelry.Status != (int)JewelryStatus.Approved)
+            {
+                throw new AppException("Jewelry is not in a valid status for update!");
+            }
+
+            // NGUY HIỂM @@
+            // lấy ra đối tượng gốc từ DB rồi (MAP) dữ liệu từ jewelryUpdate vào
+            _mapper.Map(jewelryUpdate, jewelry); //Tuyệt đối không tạo mới bằng VAR ITEM Ở ĐÂY => Tự map những field không truyền vào thành null
+            // NGUY HIỂM @@
+
+            bool success = await UpdateAsync(jewelry);
 
             if (!success)
             {
