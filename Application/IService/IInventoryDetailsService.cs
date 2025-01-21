@@ -10,7 +10,5 @@ namespace Application.IService
 {
     public interface IInventoryDetailsService : IGenericDomainService<InventoryDetails, InventoryDetailsSearch>
     {
-        Task CreateInventoryImportDetailAsync(InventoryDetailsImportCreate create);
-        Task CreateInventoryExportDetailAsync(InventoryDetailsExportCreate create);
     }
 }

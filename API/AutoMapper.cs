@@ -28,12 +28,15 @@ namespace API
             CreateMap<InventoryModel, Inventory>().ReverseMap();
             CreateMap<InventoryImportCreate, Inventory>().ReverseMap();
             CreateMap<InventoryExportCreate, Inventory>().ReverseMap();
-            CreateMap<InventoryUpdate, Inventory>().ReverseMap();
+            CreateMap<InventoryImportUpdate, Inventory>().ReverseMap();
+            CreateMap<InventoryExportUpdate, Inventory>().ReverseMap();
             CreateMap<PagedList<InventoryModel>, PagedList<Inventory>>().ReverseMap();
 
             //Inventory Detail
             CreateMap<InventoryDetailsImportCreate, InventoryDetails>().ReverseMap();
-            CreateMap<InventoryDetailsExportCreate, InventoryDetails>().ReverseMap();
+            CreateMap<InventoryDetailsExportCreate, InventoryDetails>().ReverseMap();            
+            CreateMap<InventoryDetailsImportUpdate, InventoryDetails>().ReverseMap();
+            CreateMap<InventoryDetailsExportUpdate, InventoryDetails>().ReverseMap();
             CreateMap<InventoryDetailsModel, InventoryDetails>().ReverseMap();
         }
     }
