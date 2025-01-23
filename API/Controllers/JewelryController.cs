@@ -15,7 +15,7 @@ namespace API.Controllers
     [ApiController]
     [Authorize(Roles = "Admin")]
     public class JewelryController : ControllerBase
-    {   
+    {
         private readonly IJewelryService _jewelryService;
 
         public JewelryController(IJewelryService jewelryService)
@@ -91,7 +91,7 @@ namespace API.Controllers
             };
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [Description("Xóa trang sức")]
         public async Task<AppDomainResult> DeleteJewelry(Guid id)
         {

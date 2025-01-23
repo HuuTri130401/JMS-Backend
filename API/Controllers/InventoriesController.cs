@@ -73,7 +73,7 @@ namespace API.Controllers
             return new AppDomainResult
             {
                 Success = true,
-                ResultCode = (int)HttpStatusCode.Created,
+                ResultCode = (int)HttpStatusCode.OK,
                 ResultMessage = "Successfully updated inventory."
             };
         }

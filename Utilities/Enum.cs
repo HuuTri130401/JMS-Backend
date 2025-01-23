@@ -150,6 +150,15 @@ namespace Utilities
                 new EnumObject { Key = (int)InventoryTypeEnum.Export, Title = "Export"},
             };
         }
+        public static List<EnumObject> GetGenderName()
+        {
+            return new List<EnumObject>()
+            {
+                new EnumObject { Key = (int)UserGender.Female, Title = "Female"},
+                new EnumObject { Key = (int)UserGender.Male, Title = "Male"},
+                new EnumObject { Key = (int)UserGender.Other, Title = "Other"},
+            };
+        }
     }
 
     public class EnumObject
