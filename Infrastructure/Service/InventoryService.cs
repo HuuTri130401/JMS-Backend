@@ -1,6 +1,7 @@
 ﻿using Application.IRepository;
 using Application.IService;
 using Application.Models;
+using Application.Models.InventoryDetailModels;
 using Application.Models.InventoryModels;
 using Application.Models.JewelryModels;
 using AutoMapper;
@@ -313,6 +314,7 @@ namespace Infrastructure.Service
             await _unitOfWork.BeginTransactionAsync();
             try
             {
+                // Lấy Inventory
                 Inventory inventory = await GetByIdAsync(inventoryImportUpdate.Id);
                 if (inventory == null)
                 {
@@ -320,95 +322,97 @@ namespace Infrastructure.Service
                 }
                 if (inventory.Status != (int)InventoryEnum.Temporary)
                 {
-                    throw new AppException("Only temporarty inventory can be updated");
+                    throw new AppException("Only temporary inventory can be updated.");
                 }
 
+                // Cập nhật thông tin Inventory
                 _mapper.Map(inventoryImportUpdate, inventory);
 
-                //var oldDetails = inventory.InventoryDetails.ToList();
-                var oldDetails = await _unitOfWork.Repository<InventoryDetails>()
-                    .GetQueryable()
-                    .Where(id => id.InventoryId == inventory.Id && id.Deleted == false)
-                    .ToListAsync();
-
-                var newDetails = inventoryImportUpdate.InventoryDetailsImportUpdates.ToList();
-
-                var oldDict = oldDetails.ToDictionary(d => d.JewelryId, d => d);
-                var newDict = newDetails.ToDictionary(d => d.JewelryId, d => d);
-
-                // Xoá những InventoryDetails cũ không còn trong newDetails
-                var removeList = oldDetails
-                    .Where(od => !newDict.ContainsKey(od.JewelryId))
-                    .ToList();
-
-                if (removeList.Any())
+                // Kiểm tra nếu newDetails là null hoặc rỗng
+                var newDetails = inventoryImportUpdate.InventoryDetailsImportUpdates?.ToList() ?? new List<InventoryDetailsImportUpdate>();
+                if (newDetails.Any())
                 {
-                    removeList.ForEach(x =>
+                    // Lấy tất cả InventoryDetails theo Inventory ID
+                    var oldDetails = await _unitOfWork.Repository<InventoryDetails>()
+                        .GetQueryable()
+                        .Where(id => id.InventoryId == inventory.Id && id.Deleted == false)
+                        .ToListAsync();
+
+                    // Chuyển đổi thành dictionary để tối ưu việc tìm kiếm nhanh hơn
+                    var oldDict = oldDetails.ToDictionary(d => d.JewelryId, d => d);
+                    var newDict = newDetails.ToDictionary(d => d.JewelryId, d => d);
+
+                    // Xử lý InventoryDetails cần xóa
+                    var removeList = oldDetails.Where(od => !newDict.ContainsKey(od.JewelryId)).ToList();
+                    if (removeList.Any())
                     {
-                        x.Deleted = true;
-                        x.Updated = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7));
-                    });
-                    await _inventoryDetailsService.UpdateAsync(removeList);
-                }
+                        var rollBackDict = removeList.ToDictionary(r => r.JewelryId, r => r);
+                        var listJewelry = await _jewelryService
+                            .GetListAsync(j => j.Deleted == false && rollBackDict.Keys.ToList().Contains(j.Id));
 
-                // Cập nhật các InventoryDetails cũ còn trong newDetails
-                foreach (var oldDetail in oldDetails)
-                {
-                    if (newDict.ContainsKey(oldDetail.JewelryId))
+                        listJewelry
+                            .ToList()
+                            .ForEach(x =>
+                            {
+                                    x.ImportPrice = 0;
+                                    x.Status = (int)JewelryStatus.Approved;
+                                    x.Updated = DateTimeUtil.GetCurrentTime();
+                            });
+
+                        removeList.ForEach(x =>
+                        {
+                            x.Deleted = true;
+                            x.Updated = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7));
+                        });
+                        await _jewelryService.UpdateAsync(listJewelry);
+                        await _inventoryDetailsService.UpdateAsync(removeList);
+                    }
+
+                    // Xử lý InventoryDetails cần cập nhật
+                    var updateList = oldDetails.Where(od => newDict.ContainsKey(od.JewelryId)).ToList();
+                    foreach (var oldDetail in updateList)
                     {
                         var newDetail = newDict[oldDetail.JewelryId];
                         oldDetail.ImportPrice = newDetail.ImportPrice;
-
-                        // Remove khỏi newDict để các mục còn lại là các InventoryDetails mới
-                        newDict.Remove(oldDetail.JewelryId);
                     }
-                }
 
-                // Thêm các InventoryDetails mới từ newDict
-                var addList = newDict.Values.ToList();
-                if (addList.Any())
-                {
-                    List<InventoryDetails> newInventoryDetails = _mapper.Map<List<InventoryDetails>>(addList);
-
-                    newInventoryDetails.ForEach(x => x.InventoryId = inventory.Id);
-
-                    await _inventoryDetailsService.CreateAsync(newInventoryDetails);
-                }
-
-                // Lấy tất cả Jewelry liên quan để cập nhật (cả cũ và mới)
-                var allJewelryIds = oldDetails.Select(d => d.JewelryId)
-                    .Concat(newDetails.Select(d => d.JewelryId))
-                    .Distinct()
-                    .ToList();
-
-                var jewelries = await _jewelryService.GetListAsync(
-                    j => j.Deleted == false && allJewelryIds.Contains(j.Id)
-                );
-
-                // Check trạng thái Jewelry
-                if (jewelries.Any(j => j.Status != (int)JewelryStatus.Approved && j.Status != (int)JewelryStatus.AwaitingStockIn))
-                {
-                    throw new AppException($"All jewelries must have status 'Approved' or 'AwaitingStockIn'.");
-                }
-
-                // Cập nhật ImportPrice và Status cho Jewelry
-                foreach (var j in jewelries)
-                {
-                    // Tìm InventoryDetail tương ứng trong newDetails
-                    var detail = newDetails.FirstOrDefault(d => d.JewelryId == j.Id);
-                    if (detail != null)
+                    // Xử lý InventoryDetails cần thêm mới
+                    var addList = newDict.Where(nd => !oldDict.ContainsKey(nd.Key)).Select(nd => nd.Value).ToList();
+                    if (addList.Any())
                     {
-                        j.ImportPrice = detail.ImportPrice;
-                        j.Status = (int)JewelryStatus.AwaitingStockIn;
-                        j.Updated = DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7));
+                        var newInventoryDetails = _mapper.Map<List<InventoryDetails>>(addList);
+                        newInventoryDetails.ForEach(x => x.InventoryId = inventory.Id);
+                        await _inventoryDetailsService.CreateAsync(newInventoryDetails);
                     }
                 }
 
-                // Cập nhật TotalImportPrice
-                inventory.TotalImportPrice = newDetails.Sum(x => x.ImportPrice);
+                // Cập nhật trạng thái Jewelry nếu newDetails không rỗng
+                if (newDetails.Any())
+                {
+                    var jewelryIds = newDetails.Select(d => d.JewelryId).Distinct().ToList();
+                    var listJewelry = await _jewelryService.GetListAsync(j => j.Deleted == false && jewelryIds.Contains(j.Id));
+
+                    foreach (var j in listJewelry)
+                    {
+                        var detail = newDetails.FirstOrDefault(d => d.JewelryId == j.Id);
+                        if (detail != null)
+                        {
+                            j.ImportPrice = detail.ImportPrice;
+                            j.Status = (int)JewelryStatus.AwaitingStockIn;
+                            j.Updated = DateTimeUtil.GetCurrentTime();
+                        }   
+                    }
+
+                    await _jewelryService.UpdateAsync(listJewelry);
+                }
+
+                // Cập nhật TotalImportPrice nếu có newDetails
+                if (newDetails.Any())
+                {
+                    inventory.TotalImportPrice = newDetails.Sum(x => x.ImportPrice);
+                }
 
                 await UpdateAsync(inventory);
-                await _jewelryService.UpdateAsync(jewelries);
                 await _unitOfWork.SaveAsync();
                 await _unitOfWork.CommitAsync();
             }
@@ -418,6 +422,7 @@ namespace Infrastructure.Service
                 throw new AppException("An error occurred while updating the inventory! " + ex.Message);
             }
         }
+
 
         public async Task DeleteInventoryAsync(Guid id)
         {
