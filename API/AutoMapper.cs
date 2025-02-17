@@ -1,6 +1,7 @@
 ﻿using Application.Models.InventoryDetailModels;
 using Application.Models.InventoryModels;
 using Application.Models.JewelryModels;
+using Application.Models.OrderModels;
 using Application.Models.UserModels;
 using AutoMapper;
 using Domain.Entities;
@@ -12,11 +13,17 @@ namespace API
     {
         public AutoMapper()
         {
-            //Người dùng
+            //User
             CreateMap<UserModel, User>().ReverseMap();
             CreateMap<UserCreate, User>().ReverseMap();
             CreateMap<UserUpdate, User>().ReverseMap();
             CreateMap<PagedList<UserModel>, PagedList<User>>().ReverseMap();
+
+            //User
+            CreateMap<OrderModel, Order>().ReverseMap();
+            CreateMap<OrderCreate, Order>().ReverseMap();
+            CreateMap<OrderUpdate, Order>().ReverseMap();
+            CreateMap<PagedList<OrderModel>, PagedList<Order>>().ReverseMap();
 
             //Jewelry
             CreateMap<JewelryModel, Jewelry>().ReverseMap();

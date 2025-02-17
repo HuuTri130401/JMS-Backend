@@ -10,6 +10,29 @@ namespace Utilities
     public partial class Enum
     {
         /// <summary>
+        /// Trạng thái đơn hàng
+        /// </summary>
+        public enum OrderStatus
+        {
+            /// <summary>
+            /// Đang xử lí
+            /// </summary>
+            Processing = 1,
+            /// <summary>
+            /// Xác nhận
+            /// </summary>
+            Approved = 2,
+            /// <summary>
+            /// Hoàn thành
+            /// </summary>
+            Success = 3,
+            /// <summary>
+            /// Hủy
+            /// </summary>
+            Cancel = 4,
+        }
+
+        /// <summary>
         /// Trạng thái tài khoản
         /// </summary>
         public enum UserStatus
@@ -25,15 +48,15 @@ namespace Utilities
         public enum UserGender
         {
             /// <summary>
-            /// nữ
+            /// Nữ
             /// </summary>
             Female = 1,
             /// <summary>
-            /// nam
+            /// Nam
             /// </summary>
             Male = 2,
             /// <summary>
-            /// khác
+            /// Khác
             /// </summary>
             Other = 3
         }
@@ -117,6 +140,17 @@ namespace Utilities
 
     public partial class EnumName
     {
+        public static List<EnumObject> GetOrderStatusName()
+        {
+            return new List<EnumObject>()
+            {
+                new EnumObject {Key = (int)OrderStatus.Processing, Title = "Processing"},
+                new EnumObject {Key = (int)OrderStatus.Approved, Title = "Approved"},
+                new EnumObject {Key = (int)OrderStatus.Success, Title = "Success"},
+                new EnumObject {Key = (int)OrderStatus.Cancel, Title = "Cancel"},
+            };
+        }
+
         public static List<EnumObject> GetJewelryStatusName()
         {
             return new List<EnumObject>()
