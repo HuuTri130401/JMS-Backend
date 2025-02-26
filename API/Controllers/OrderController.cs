@@ -24,7 +24,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Description("Xem danh sách đơn hàng")]
-        public async Task<AppDomainResult> GetOrders([FromQuery]OrderSearch orderSearch)
+        public async Task<AppDomainResult> GetOrders([FromQuery] OrderSearch orderSearch)
         {
             PagedList<OrderModel> pagedList = await _orderService.GetPagedListOrderAsync(orderSearch);
             return new AppDomainResult
@@ -33,6 +33,20 @@ namespace API.Controllers
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK,
                 ResultMessage = "Successfully retrieved the list of orders"
+            };
+        }
+
+        [HttpGet("{id}")]
+        [Description("Xem thông tin chi tiết đơn hàng.")]
+        public async Task<AppDomainResult> GetOrderById(Guid id)
+        {
+            var result = await _orderService.GetOrderByIdAsync(id);
+            return new AppDomainResult
+            {
+                Data = result,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                ResultMessage = "Successfully retrieved detail of order"
             };
         }
 
@@ -50,5 +64,31 @@ namespace API.Controllers
             };
         }
 
+        [HttpPut("{id}")]
+        [Description("Cập nhật đơn hàng")]
+        public async Task<AppDomainResult> UpdateOrder(Guid id, [FromBody] OrderUpdate orderUpdate)
+        {
+            await _orderService.UpdateOrderAsync(orderUpdate);
+            return new AppDomainResult
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                Data = null,
+                ResultMessage = "Successfully updated the order"
+            };
+        }
+
+        [HttpDelete("{id}")]
+        [Description("Xóa đơn hàng")]
+        public async Task<AppDomainResult> DeleteOrder(Guid id)
+        {
+            await _orderService.DeleteOrderAsync(id);
+            return new AppDomainResult
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                ResultMessage = "Successfully deleted the order"
+            };
+        }
     }
 }
