@@ -6,7 +6,7 @@ using NLog.Web;
 using Utilities;
 
 var logger = LogManager.Setup()
-    .LoadConfigurationFromAppSettings()  
+    .LoadConfigurationFromAppSettings()
     .GetCurrentClassLogger();
 
 try
@@ -29,7 +29,17 @@ try
     builder.Services.AddAutoMapper(typeof(Program));
 
     //============ CORS ============//
-    builder.Services.AddCors();
+    //builder.Services.AddCors();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll",
+            policy =>
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyMethod()
+                      .AllowAnyHeader();
+            });
+    });
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -77,14 +87,18 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseCors(builder =>
-    {
-        builder.AllowAnyHeader()
-        .AllowAnyOrigin()
-        .AllowAnyMethod();
-    });
+    //app.UseCors(builder =>
+    //{
+    //    builder.AllowAnyHeader()
+    //    .AllowAnyOrigin()
+    //    .AllowAnyMethod();
+    //});
 
-    app.UseHttpsRedirection();
+    //Cho phép frontend gọi API từ bất kỳ domain nào(AllowAnyOrigin).
+    //Tránh lỗi CORS khi dùng HTTPS.
+    app.UseCors("AllowAll"); 
+
+    app.UseHttpsRedirection(); // Tự động redirect HTTP → HTTPS nếu HTTPS được bật
 
     app.UseAuthentication();
     app.UseAuthorization();
