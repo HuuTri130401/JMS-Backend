@@ -35,9 +35,11 @@ try
         options.AddPolicy("AllowAll",
             policy =>
             {
-                policy.AllowAnyOrigin()
-                      .AllowAnyMethod()
-                      .AllowAnyHeader();
+                policy
+                    .WithOrigins("https://localhost:5000")
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
             });
     });
 
@@ -80,27 +82,22 @@ try
     Utilities.HttpContext.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
     app.UseMiddleware<ErrorHandlingMiddleware>();
 
-    // Configure the HTTP request pipeline.
+    // // Sử dụng HTTPS chỉ khi có chứng chỉ hợp lệ
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseHttpsRedirection(); // Tự động redirect HTTP → HTTPS nếu HTTPS được bật
+    }
+
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
         app.UseSwaggerUI();
     }
 
-    //app.UseCors(builder =>
-    //{
-    //    builder.AllowAnyHeader()
-    //    .AllowAnyOrigin()
-    //    .AllowAnyMethod();
-    //});
-
-    //Cho phép frontend gọi API từ bất kỳ domain nào(AllowAnyOrigin).
-    //Tránh lỗi CORS khi dùng HTTPS.
-    app.UseCors("AllowAll"); 
-
-    app.UseHttpsRedirection(); // Tự động redirect HTTP → HTTPS nếu HTTPS được bật
+    app.UseCors("AllowAll");
 
     app.UseAuthentication();
+
     app.UseAuthorization();
 
     app.MapControllers();

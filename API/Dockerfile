@@ -32,4 +32,6 @@ ENTRYPOINT ["dotnet", "API.dll"]
 
 #docker build -f "Dockerfile" -t jms:1.0 "../"
 #docker run -p 8080:80 -e ASPNETCORE_ENVIRONMENT=Development jms:1.0
-#http://localhost:8080/swagger/index.html
+#http://localhost:5000/swagger/index.html
+#docker compose down
+#docker compose up --build
