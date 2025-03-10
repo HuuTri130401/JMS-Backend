@@ -25,6 +25,7 @@
       - "1433:1433"
     volumes:
       - sqlserver_data:/var/opt/mssql
+      - ./init-db:/docker-entrypoint-initdb.d
 
 volumes:
   sqlserver_data:

@@ -9,9 +9,6 @@ namespace Application.Models.OrderModels
 {
     public class OrderUpdate : UpdateModel
     {
-        [Required(ErrorMessage = "OrderId is required!")]
-        public Guid Id { get; set; } 
-
         public Guid? CustomerId { get; set; } 
         public string Note { get; set; } 
 

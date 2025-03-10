@@ -64,9 +64,9 @@ namespace API.Controllers
             };
         }
 
-        [HttpPut("{id}")]
+        [HttpPut]
         [Description("Cập nhật đơn hàng")]
-        public async Task<AppDomainResult> UpdateOrder(Guid id, [FromBody] OrderUpdate orderUpdate)
+        public async Task<AppDomainResult> UpdateOrder([FromBody] OrderUpdate orderUpdate)
         {
             await _orderService.UpdateOrderAsync(orderUpdate);
             return new AppDomainResult
