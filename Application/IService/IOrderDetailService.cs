@@ -1,4 +1,4 @@
-﻿using Application.Models.InventoryDetailModels;
+﻿using Domain.BaseEntities;
 using Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.IService
 {
-    public interface IInventoryDetailsService : IGenericDomainService<InventoryDetails, InventoryDetailsSearch>
+    public interface IOrderDetailService : IGenericDomainService<OrderDetail, BaseSearch>
     {
     }
 }

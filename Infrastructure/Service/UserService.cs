@@ -128,8 +128,11 @@ namespace Infrastructure.Service
                 throw new KeyNotFoundException($"User with ID '{userUpdate.Id}' does not exist.");
             }
 
-            var item = _mapper.Map<User>(userUpdate);
+            //lấy ra đối tượng gốc từ DB rồi (MAP) dữ liệu từ userUpdate vào
+            _mapper.Map(userUpdate, user);
+
             IList<User> existingUser = await GetListAsync(x => x.Deleted == false
+                && x.Id != user.Id // Loại trừ user hiện tại
                 && (x.Email == user.Email || x.Phone == user.Phone || x.UserName == user.UserName),
                 x => new User { Id = x.Id, Phone = x.Phone, UserName = x.UserName });
 
@@ -145,7 +148,7 @@ namespace Infrastructure.Service
 
             //item.UpdatedBy = LoginContext.Instance?.CurrentUser.UserId;
 
-            bool success = await UpdateAsync(item);
+            bool success = await UpdateAsync(user);
             if (!success)
             {
                 throw new AppException("An error occurred while updating the User!!");

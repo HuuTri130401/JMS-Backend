@@ -16,7 +16,7 @@ namespace Application.Models.JewelryModels
         public decimal? ImportPrice { get; set; }
         public decimal? SalePrice { get; set; }
         public int Status { get; set; }
-        public string? SatusName
+        public string? StatusName
         {
             get
             {

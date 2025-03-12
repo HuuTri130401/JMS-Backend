@@ -6,7 +6,7 @@ using NLog.Web;
 using Utilities;
 
 var logger = LogManager.Setup()
-    .LoadConfigurationFromAppSettings()  
+    .LoadConfigurationFromAppSettings()
     .GetCurrentClassLogger();
 
 try
@@ -29,7 +29,19 @@ try
     builder.Services.AddAutoMapper(typeof(Program));
 
     //============ CORS ============//
-    builder.Services.AddCors();
+    //builder.Services.AddCors();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAll",
+            policy =>
+            {
+                policy
+                    .WithOrigins("https://localhost:5000")
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+    });
 
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -70,23 +82,22 @@ try
     Utilities.HttpContext.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
     app.UseMiddleware<ErrorHandlingMiddleware>();
 
-    // Configure the HTTP request pipeline.
+    // // Sử dụng HTTPS chỉ khi có chứng chỉ hợp lệ
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseHttpsRedirection(); // Tự động redirect HTTP → HTTPS nếu HTTPS được bật
+    }
+
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
         app.UseSwaggerUI();
     }
 
-    app.UseCors(builder =>
-    {
-        builder.AllowAnyHeader()
-        .AllowAnyOrigin()
-        .AllowAnyMethod();
-    });
-
-    app.UseHttpsRedirection();
+    app.UseCors("AllowAll");
 
     app.UseAuthentication();
+
     app.UseAuthorization();
 
     app.MapControllers();

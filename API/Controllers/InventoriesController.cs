@@ -65,6 +65,19 @@ namespace API.Controllers
             };
         }
 
+        [HttpPut]
+        [Description("Cập nhật phiên nhập kho")]
+        public async Task<AppDomainResult> UpdateInventory(InventoryImportUpdate update)
+        {
+            await _inventoryService.UpdateImportInventoryAsync(update);
+            return new AppDomainResult
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                ResultMessage = "Successfully updated inventory."
+            };
+        }
+
         [HttpPut("update-status")]
         [Description("Cập nhật xuất/ nhập kho")]
         public async Task<AppDomainResult> UpdateStatus(InventoryImportProcessApproval statusModel)
@@ -75,6 +88,19 @@ namespace API.Controllers
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK,
                 ResultMessage = "Successfully updated status inventory"
+            };
+        }
+
+        [HttpDelete("{id}")]
+        [Description("Xóa phiên nhập kho")]
+        public async Task<AppDomainResult> DeleteIndenventory(Guid id)
+        {
+            await _inventoryService.DeleteInventoryAsync(id);
+            return new AppDomainResult
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                ResultMessage = "Successfully deleted inventory"
             };
         }
     }

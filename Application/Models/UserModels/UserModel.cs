@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utilities;
 
 namespace Application.Models.UserModels
 {
@@ -21,6 +22,13 @@ namespace Application.Models.UserModels
         public DateTimeOffset? Birthday { get; set; }
         public string IdentityCard { get; set; }
         public int? Gender { get; set; }
+        public string? GenderName
+        {
+            get
+            {
+                return EnumName.GetGenderName().SingleOrDefault(x => x.Key == Gender)?.Title;
+            }
+        }
         public bool IsAdmin { get; set; } = false;
         public decimal PurchaseRevenue { get; set; } = 0; 
     }

@@ -19,16 +19,6 @@ namespace Infrastructure.Service
         {
         }
 
-        public Task CreateInventoryExportDetailAsync(InventoryDetailsExportCreate create)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task CreateInventoryImportDetailAsync(InventoryDetailsImportCreate create)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<PagedList<InventoryDetails>> GetPagedListData(InventoryDetailsSearch baseSearch)
         {
             throw new NotImplementedException();

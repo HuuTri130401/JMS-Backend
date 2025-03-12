@@ -28,6 +28,7 @@ namespace Infrastructure
             services.AddScoped(typeof(IGenericRepository<>), typeof(BaseDomainRepository<>));
 
             #region Entity_Repo
+            services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IJewelryService, JewelryService>();

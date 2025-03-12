@@ -16,7 +16,8 @@ namespace Application.IService
         Task<InventoryModel> GetInventoryByIdAsync(Guid id);
         Task CreateImportInventoryAsync(InventoryImportCreate inventoryImportCreate);
         Task CreateExportInventoryAsync(InventoryExportCreate inventoryExportCreate);
-        Task UpdateInventoryAsync(InventoryUpdate inventoryUpdate);
+        Task UpdateImportInventoryAsync(InventoryImportUpdate inventoryImportUpdate);
+        Task UpdateExportInventoryAsync(InventoryExportUpdate inventoryExportUpdate);
         Task ProcessImportInventory(InventoryImportProcessApproval statusModel);
         Task DeleteInventoryAsync(Guid id);
     }

@@ -1,6 +1,7 @@
 ﻿using Application.Models.InventoryDetailModels;
 using Application.Models.InventoryModels;
 using Application.Models.JewelryModels;
+using Application.Models.OrderModels;
 using Application.Models.UserModels;
 using AutoMapper;
 using Domain.Entities;
@@ -12,11 +13,17 @@ namespace API
     {
         public AutoMapper()
         {
-            //Người dùng
+            //User
             CreateMap<UserModel, User>().ReverseMap();
             CreateMap<UserCreate, User>().ReverseMap();
             CreateMap<UserUpdate, User>().ReverseMap();
             CreateMap<PagedList<UserModel>, PagedList<User>>().ReverseMap();
+
+            //User
+            CreateMap<OrderModel, Order>().ReverseMap();
+            CreateMap<OrderCreate, Order>().ReverseMap();
+            CreateMap<OrderUpdate, Order>().ReverseMap();
+            CreateMap<PagedList<OrderModel>, PagedList<Order>>().ReverseMap();
 
             //Jewelry
             CreateMap<JewelryModel, Jewelry>().ReverseMap();
@@ -28,12 +35,15 @@ namespace API
             CreateMap<InventoryModel, Inventory>().ReverseMap();
             CreateMap<InventoryImportCreate, Inventory>().ReverseMap();
             CreateMap<InventoryExportCreate, Inventory>().ReverseMap();
-            CreateMap<InventoryUpdate, Inventory>().ReverseMap();
+            CreateMap<InventoryImportUpdate, Inventory>().ReverseMap();
+            CreateMap<InventoryExportUpdate, Inventory>().ReverseMap();
             CreateMap<PagedList<InventoryModel>, PagedList<Inventory>>().ReverseMap();
 
             //Inventory Detail
             CreateMap<InventoryDetailsImportCreate, InventoryDetails>().ReverseMap();
-            CreateMap<InventoryDetailsExportCreate, InventoryDetails>().ReverseMap();
+            CreateMap<InventoryDetailsExportCreate, InventoryDetails>().ReverseMap();            
+            CreateMap<InventoryDetailsImportUpdate, InventoryDetails>().ReverseMap();
+            CreateMap<InventoryDetailsExportUpdate, InventoryDetails>().ReverseMap();
             CreateMap<InventoryDetailsModel, InventoryDetails>().ReverseMap();
         }
     }
