@@ -8,9 +8,10 @@ JMS-Backend is an ASP.NET Core Web API project designed to manage a jewelry mana
 
 ## Features
 
-- **Inventory Management**: Manage jewelry items, including adding, updating, and deleting items.
-- **Sales Management**: Handle sales transactions, including creating and viewing sales records.
-- **Customer Management**: Manage customer information and track customer purchases.
+- **User Management**: Manage customer information and track customer purchases.
+- **Inventory Management**: Manage inventory, including adding, updating, and deleting inventory.
+- **Jewelry Management**: Manage jewelry items, including adding, updating, and deleting items.
+- **Orders Management**: Handle orders transactions, including creating and viewing order records.
 - **Authentication and Authorization**: Secure API endpoints using JWT authentication.
 - **Logging**: Integrated logging using NLog.
 - **Swagger**: API documentation and testing using Swagger.
@@ -30,7 +31,7 @@ git clone https://github.com/HuuTri130401/JMS-Backend.git
 cd JMS-Backend
 ```
 
-## Using Docker
+### Using Docker
 1. Build the Docker image:
 ```sh
 docker-compose build
