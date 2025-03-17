@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,5 +29,7 @@ namespace Domain.Entities
 
         // 1 Order có thể có nhiều OrderDetails
         public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
+        [NotMapped]     
+        public string CustomerName { get; set; }
     }
 }
