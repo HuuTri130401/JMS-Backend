@@ -49,3 +49,28 @@ docker-compose up
 ```sh
  http://localhost:5000/swagger/index.html
 ```
+
+### Screenshots
+
+User Management
+![Create User](./init-db/Images/createuser.png)
+![Update User](./init-db/Images/updateuser.png)
+![Users List](./init-db/Images/users.png)
+
+Inventory Management
+![Create Inventory](./init-db/Images/createinventory.png)
+![Inventory List](./init-db/Images/inventory.png)
+![Inventory Detail](./init-db/Images/inventorydetail.png)
+
+Jewelry Management
+![Create Jewelry](./init-db/Images/createjewelry.png)
+![Edit Approve and Update Jewelry](./init-db/Images/editapproveandupdatejewelry.png)
+![Delete Jewelry](./init-db/Images/deletejewelry.png)
+![Jewelry List](./init-db/Images/jewelry.png)
+
+Orders Management
+![Create Order](./init-db/Images/createorder.png)
+![Order Detail](./init-db/Images/orderdetail.png)
+
+Login
+![Login](./init-db/Images/login.png)
