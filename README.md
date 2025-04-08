@@ -21,6 +21,9 @@ JMS-Backend is an ASP.NET Core Web API project designed to manage a jewelry mana
 - [.NET 6.0 SDK](https://dotnet.microsoft.com/download/dotnet/6.0)
 - [Docker](https://www.docker.com/get-started)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+- [NLog](https://nlog-project.org/)
+- [JWT Authentication](https://jwt.io/)
+- [Swagger](https://swagger.io/)
 
 ## Getting Started
 

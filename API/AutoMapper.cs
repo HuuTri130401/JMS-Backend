@@ -19,8 +19,10 @@ namespace API
             CreateMap<UserUpdate, User>().ReverseMap();
             CreateMap<PagedList<UserModel>, PagedList<User>>().ReverseMap();
 
-            //User
-            CreateMap<OrderModel, Order>().ReverseMap();
+            //Order
+            CreateMap<OrderModel, Order>()
+                .ForMember(dest => dest.CustomerName, opt => opt.Ignore())
+                .ReverseMap();
             CreateMap<OrderCreate, Order>().ReverseMap();
             CreateMap<OrderUpdate, Order>().ReverseMap();
             CreateMap<PagedList<OrderModel>, PagedList<Order>>().ReverseMap();

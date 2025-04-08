@@ -334,6 +334,7 @@ namespace Infrastructure.Service
                 {
                     // Lấy tất cả InventoryDetails theo Inventory ID
                     var oldDetails = await _unitOfWork.Repository<InventoryDetails>()
+
                         .GetQueryable()
                         .Where(id => id.InventoryId == inventory.Id && id.Deleted == false)
                         .ToListAsync();
