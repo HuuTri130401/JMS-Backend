@@ -53,51 +53,24 @@ docker-compose up
 ### Screenshots
 
 User Management
-
-Create User
-![Create User](./init-db/Images/create user.png)
-
-Update User
-![Update User](./init-db/Images/update user.png)
-
-Users List
+![Create User](./init-db/Images/createuser.png)
+![Update User](./init-db/Images/updateuser.png)
 ![Users List](./init-db/Images/users.png)
 
 Inventory Management
-
-Create Inventory
-![Create Inventory](./init-db/Images/create inventory.png)
-
-Inventory List
+![Create Inventory](./init-db/Images/createinventory.png)
 ![Inventory List](./init-db/Images/inventory.png)
-
-Inventory Detail
-![Inventory Detail](./init-db/Images/inventory detail.png)
+![Inventory Detail](./init-db/Images/inventorydetail.png)
 
 Jewelry Management
-
-Create Jewelry
-![Create Jewelry](./init-db/Images/create jewelry.png)
-
-Edit, Approve and Update Jewelry
-![Edit Approve and Update Jewelry](./init-db/Images/edit approve and update jewelry.png)
-
-Delete Jewelry
-![Delete Jewelry](./init-db/Images/delete jewelry.png)
-
-Jewelry List
+![Create Jewelry](./init-db/Images/createjewelry.png)
+![Edit Approve and Update Jewelry](./init-db/Images/editapproveandupdatejewelry.png)
+![Delete Jewelry](./init-db/Images/deletejewelry.png)
 ![Jewelry List](./init-db/Images/jewelry.png)
 
-
 Orders Management
-
-Create Order
-![Create Order](./init-db/Images/create order.png)
-
-Order Detail
-![Order Detail](./init-db/Images/order detail.png)
-
-Authentication and Authorization
+![Create Order](./init-db/Images/createorder.png)
+![Order Detail](./init-db/Images/orderdetail.png)
 
 Login
 ![Login](./init-db/Images/login.png)
